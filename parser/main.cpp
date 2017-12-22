@@ -47,15 +47,23 @@ int main() {
     int SB0=0;
     int SB1=0;
     int SB2=0;
+    int SB3=0;
+    int SB4=0;
+    int SB5=0;
+    int SB6=0;
 
 
-    ifstream in("D:\\Evgeny\\txt\\1.txt",ios::binary|ios::in);
+    ifstream in("E:\\test_files\\parser1.txt",ios::binary|ios::in);
       in.read((char*)&HB0,sizeof HB0);
       in.read((char*)&HB1,sizeof HB1);
       in.read((char*)&HB2,sizeof HB2);
       in.read((char*)&SB0,sizeof SB0);
       in.read((char*)&SB1,sizeof SB1);
       in.read((char*)&SB2,sizeof SB2);
+      in.read((char*)&SB3,sizeof SB3);
+      in.read((char*)&SB4,sizeof SB4);
+      in.read((char*)&SB5,sizeof SB5);
+      in.read((char*)&SB6,sizeof SB6);
     in.close();
     int k = HB0-129;
     Packet_type pflag;
@@ -70,8 +78,11 @@ int main() {
     case 0x01:
         pflag=Packet_type(HB0);
         cout<<"packet type: "<<arr_type[pflag]<<endl;
-        if ((HB1 == 0) || (HB2 == 0)){
-
+        if ((HB1 == 0) && (HB2 == 0) && (SB0 == 0)){
+            long CTS = (SB1<<16)|(SB2<<8)|SB3;
+            long N = (SB4<< 16)|(SB5<<8)|SB6;
+            cout<<"CTS: "<< CTS <<endl;
+            cout<<"N: "<< N <<endl;
         }
         break;
     case 0x02:
