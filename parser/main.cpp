@@ -88,6 +88,34 @@ int main() {
     case 0x02:
         pflag=Packet_type(HB0);
         cout<<"packet type: "<<arr_type[pflag]<<endl;
+        if (HB0 == 0x02){
+              long layout = (HB1>>4);
+              long sp0 = (HB1<<0)|(HB1<<1)|(HB1<<2)|(HB1<<3);
+              long sp1 = (HB1<<4)>>4;
+              long sp2 = (HB1>>2);
+              long sp3 = (HB1>>3);
+              long sf0 = (HB2>>0);
+              long sf1 = (HB2>>1);
+              long sf2 = (HB2>>2);
+              long sf3 = (HB2>>3);
+              long B0 = (HB2>>4);
+              long B1 = (HB2>>5);
+              long B2 = (HB2>>6);
+              long B3 = (HB2>>7);
+              cout<<"layout: "<<layout<<endl;
+              cout<<"sample_present.sp0: "<<sp0<<endl;
+              cout<<"sample_present.sp1: "<<sp1<<endl;
+              cout<<"sample_present.sp2: "<<sp2<<endl;
+              cout<<"sample_present.sp3: "<<sp3<<endl;
+              cout<<"sample_flat.sp0: "<<sf0<<endl;
+              cout<<"sample_flat.sp1: "<<sf1<<endl;
+              cout<<"sample_flat.sp2: "<<sf2<<endl;
+              cout<<"sample_flat.sp3: "<<sf3<<endl;
+              cout<<"B: "<<B0<<endl;
+              cout<<"B: "<<B1<<endl;
+              cout<<"B: "<<B2<<endl;
+              cout<<"B: "<<B3<<endl;
+         }
         break;
     case 0x03:
         pflag=Packet_type(HB0);
