@@ -480,7 +480,21 @@ int main() {
              long IFVersion = HB1;
              if (IFVersion == 0x01){
                   long IFLenght = HB2&0x1F;
-                  long IEEE = PB
+                  long IEEE= PB1 | (PB2<<8) | (PB3<<16);
+                  long VA = (PB4&0xF0);
+                  long VB = (PB4&0xF);
+                  long VC = (PB5&0xF0);
+                  long VD = (PB5&0xF);
+                  long SupAI = (PB6&0x80);
+                  long DC48bit = (PB6&0x40);
+                  long DC36bit = (PB6&0x20);
+                  long DC30bit = (PB6&0x10);
+                  long DCY444 = (PB6&0x08);
+                  long DVIDUAL = (PB6&0x010);
+                  long MAXTMDS = (PB7);
+                  long LFP = (PB8&0x80);
+                  long ILFP = (PB8&0x40);
+                  long
                   cout<<"InfoFrame_version: "<<IFVersion<<endl;
                   cout<<"InfoFrame_length: "<<IFLenght<<endl;
              }
