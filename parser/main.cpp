@@ -115,7 +115,7 @@ int main() {
       in.read((char*)&PB26,sizeof PB26);
       in.read((char*)&PB27,sizeof PB27);
     in.close();
-    int k = HB0-129;
+    //int k = HB0-129;
     Packet_type pflag;
 
 
@@ -283,22 +283,22 @@ int main() {
         pflag=Packet_type(HB0);
         cout<<"packet type: "<<arr_type[pflag]<<endl;
         if ((HB1 == 0) && (HB2 == 0) && ((PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27)==0)){
-            long UEI16 = PB16;
-            long UEI17 = PB17;
-            long UEI18 = PB18;
-            long UEI19 = PB19;
-            long UEI20 = PB20;
-            long UEI21 = PB21;
-            long UEI22 = PB22;
-            long UEI23 = PB23;
-            long UEI24 = PB24;
-            long UEI25 = PB25;
-            long UEI26 = PB26;
-            long UEI27 = PB27;
-            long UEI28 = PB28;
-            long UEI29 = PB29;
-            long UEI30 = PB30;
-            long UEI31 = PB31;
+            long UEI16 = PB0;
+            long UEI17 = PB1;
+            long UEI18 = PB2;
+            long UEI19 = PB3;
+            long UEI20 = PB4;
+            long UEI21 = PB5;
+            long UEI22 = PB6;
+            long UEI23 = PB7;
+            long UEI24 = PB8;
+            long UEI25 = PB9;
+            long UEI26 = PB10;
+            long UEI27 = PB11;
+            long UEI28 = PB12;
+            long UEI29 = PB13;
+            long UEI30 = PB14;
+            long UEI31 = PB15;
             cout<<"UPC_EAN_ISRC_16"<<UEI16<<endl;
             cout<<"UPC_EAN_ISRC_17"<<UEI17<<endl;
             cout<<"UPC_EAN_ISRC_18"<<UEI18<<endl;
@@ -336,6 +336,7 @@ int main() {
             cout<<"samples_present.sp0: "<<sp0<<endl;
             cout<<"samples_present.sp1: "<<sp1<<endl;
             cout<<"samples_present.sp2: "<<sp2<<endl;
+            cout<<"samples_present.sp3: "<<sp3<<endl;
             cout<<"samples_invalid.sp0: "<<si0<<endl;
             cout<<"samples_invalid.sp1: "<<si1<<endl;
             cout<<"samples_invalid.sp2: "<<si2<<endl;
@@ -384,12 +385,12 @@ int main() {
             cout<<"Current_Gamut_Seq_Num: "<<cgsn<<endl;
             cout<<"Packet_Seq: "<<packetseq<<endl;
             switch (GBDprof) {
-            case 0:
+               case 0:{
                 cout<<"P0"<<endl;
                 long GBD = PB0 | PB1 | PB2 | PB3 | PB4 | PB5 |PB6 | PB7 | PB8 |PB9 | PB10 | PB11 |PB12 | PB13 | PB14 |PB15 | PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27;
-                cout<<"GBD: "<<GBD<<endl;
+                cout<<"GBD: "<<GBD<<endl;}
                 break;
-            case 1:
+               case 0x01:{
                 cout<<"P1"<<endl;
                 if (packetseq == 0){
                     long GBDLengthH = (PB0);
@@ -401,12 +402,13 @@ int main() {
                     cout<<"Checksum: "<<Checksum<<endl;
                     cout<<"GBD: "<<GBD<<endl;
                 }
+
                 else {
                     long GBD = PB0 | PB1 | PB2 | PB3 | PB4 | PB5 |PB6 | PB7 | PB8 |PB9 | PB10 | PB11 |PB12 | PB13 | PB14 |PB15 | PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27;
                     cout<<"GBD: "<<GBD<<endl;
-                }
+                }}
                 break;
-            case 2:
+            case 2:{
                 cout<<"P2"<<endl;
                 if (packetseq == 0){
                     long GBDLengthH = (PB0);
@@ -421,8 +423,9 @@ int main() {
                 else {
                     long GBD = PB0 | PB1 | PB2 | PB3 | PB4 | PB5 |PB6 | PB7 | PB8 |PB9 | PB10 | PB11 |PB12 | PB13 | PB14 |PB15 | PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27;
                     cout<<"GBD: "<<GBD<<endl;
+                }}
                 break;
-            case 3:
+            case 3:{
                 cout<<"P3"<<endl;
                 if (packetseq == 0){
                     long GBDLengthH = (PB0);
@@ -437,10 +440,12 @@ int main() {
                 else {
                     long GBD = PB0 | PB1 | PB2 | PB3 | PB4 | PB5 |PB6 | PB7 | PB8 |PB9 | PB10 | PB11 |PB12 | PB13 | PB14 |PB15 | PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27;
                     cout<<"GBD: "<<GBD<<endl;
+                }
+                break;}
+            default:{
+                        cout<<"check spicifications"<<endl;
                 break;
-            default:
-                break;
-            }
+            }}
 
         }
         break;
@@ -475,8 +480,8 @@ int main() {
     if (((HB0&0x80) !=0) && ((HB2&0xE0) == 0)){
         long IFType = HB0&0x7F;
         switch (IFType) {
-        case 0x01:
-            cout<<"InfoFrame Type: Vendor Specific InfoFrame"<endl;
+        case 0x01:{
+            cout<<"InfoFrame Type: Vendor Specific InfoFrame"<<endl;
              long IFVersion = HB1;
              if (IFVersion == 0x01){
                   long IFLenght = HB2&0x1F;
@@ -494,26 +499,55 @@ int main() {
                   long MAXTMDS = (PB7);
                   long LFP = (PB8&0x80);
                   long ILFP = (PB8&0x40);
-                  long
                   cout<<"InfoFrame_version: "<<IFVersion<<endl;
                   cout<<"InfoFrame_length: "<<IFLenght<<endl;
+                  cout<<"IEEE Registration Identifier: "<<IEEE<<endl;
+                  cout<<"A: "<<VA<<endl;
+                  cout<<"B: "<<VB<<endl;
+                  cout<<"C: "<<VC<<endl;
+                  cout<<"D: "<<VD<<endl;
+                  cout<<"Supports_AI: "<<SupAI<<endl;
+                  cout<<"DC_30bit: "<<DC30bit<<endl;
+                  cout<<"DC_36bit: "<<DC36bit<<endl;
+                  cout<<"DC_48bit: "<<DC48bit<<endl;
+                  cout<<"DC_Y444: "<<DCY444<<endl;
+                  cout<<"DVI_Dual: "<<DVIDUAL<<endl;
+                  cout<<"Max_TMDS_Clock: "<<MAXTMDS<<endl;
+                  cout<<"Latency_Fields_Present: "<<LFP<<endl;
+                  cout<<"I_Latency_Fields_Present: "<<ILFP<<endl;
+                 }
+             if (IFLenght>=9){
+                long VideoLatency = PB9;
+                cout<<"Video_Latency: "<<VideoLatency<<endl;
+                if (IFLenght>=10){
+                    long AudioLatency = PB10;
+                    cout<<"Audio_Latency: "<<AudioLatency<<endl;
+                    if (IFLenght>=11){
+                        long InterlacedVideoLatency = PB11;
+                        cout<<"Interlaced_Video_Latency: "<<InterlacedVideoLatency<<endl;
+                        if (IFLenght>=12){
+                            long InterlacedAudioLatency = PB12;
+                            cout<<"Interlaced_Audio_Latency: "<<InterlacedAudioLatency<<endl;
+                    }
+                }
              }
-            break;
-        case 0x02:
-            cout<<"InfoFrame Type: AVI InfoFrame"<endl;
-            break;
-        case 0x03:
-            cout<<"InfoFrame Type: Source Product Descriptor InfoFrame"<endl;
-            break;
-        case 0x04:
-            cout<<"InfoFrame Type: Audio InfoFrame"<endl;
-            break;
-        case 0x05:
-            cout<<"InfoFrame Type: MPEG Source InfoFrame"<endl;
-            break;
-        case 0x06:
-            cout<<"InfoFrame Type: NTSC VBI InfoFrame"<endl;
-            break;
+
+            break;}
+        case 2:{
+            cout<<"InfoFrame Type: AVI InfoFrame"<<endl;
+            break;}
+        case 3:{
+            cout<<"InfoFrame Type: Source Product Descriptor InfoFrame"<<endl;
+            break;}
+        case 4:{
+            cout<<"InfoFrame Type: Audio InfoFrame"<<endl;
+            break;}
+        case 5:{
+            cout<<"InfoFrame Type: MPEG Source InfoFrame"<<endl;
+            break;}
+        case 6:{
+            cout<<"InfoFrame Type: NTSC VBI InfoFrame"<<endl;
+            break;}
         default:
             cout<<"invalid"<<endl;
             break;
@@ -523,3 +557,4 @@ int main() {
         cout<<"InfoFrame_version: "<<IFVersion<<endl;
         cout<<"InfoFrame_length: "<<IFLenght<<endl;
     }
+}
