@@ -483,8 +483,8 @@ int main() {
         case 0x01:{
             cout<<"InfoFrame Type: Vendor Specific InfoFrame"<<endl;
              long IFVersion = HB1;
+             long IFLenght = HB2&0x1F;
              if (IFVersion == 0x01){
-                  long IFLenght = HB2&0x1F;
                   long IEEE= PB1 | (PB2<<8) | (PB3<<16);
                   long VA = (PB4&0xF0);
                   long VB = (PB4&0xF);
@@ -531,21 +531,389 @@ int main() {
                     }
                 }
              }
-
+             }
             break;}
-        case 2:{
+        case 0x02:{
             cout<<"InfoFrame Type: AVI InfoFrame"<<endl;
+            long IFVersion = HB1;
+            if (IFVersion == 0x01){
+                 long IFLenght = HB2&0x1F;
+                 long Y1 = PB1&0x40;
+                 long Y0 = PB1&0x20;
+                 long A0 = PB1&0x10;
+                 long B1 = PB1&0x08;
+                 long B0 = PB1&0x04;
+                 long S1 = PB1&0x02;
+                 long S0 = PB1&0x01;
+                 long C1 = PB2&0x80;
+                 long C0 = PB2&0x40;
+                 long M1 = PB2&0x20;
+                 long M0 = PB2&0x10;
+                 long R3 = PB2&0x08;
+                 long R2 = PB2&0x04;
+                 long R1 = PB2&0x02;
+                 long R0 = PB2&0x01;
+                 long SC1 = PB3&0x02;
+                 long SC0 = PB3&0x01;
+                 long ETB = (PB5&0xFF) | (PB6&0xFF00);
+                 long SBB = (PB7&0xFF) | (PB8&0xFF00);
+                 long ELB = (PB9&0xFF) | (PB10&0xFF00);
+                 long SRB = (PB11&0xFF) | (PB12&0xFF00);
+                 cout<<"Version: "<<IFVersion<<endl;
+                 cout<<"Length: "<<IFLenght<<endl;
+                 cout<<"Y1: "<<Y1<<endl;
+                 cout<<"Y0: "<<Y0<<endl;
+                 cout<<"A0: "<<A0<<endl;
+                 cout<<"B1: "<<B1<<endl;
+                 cout<<"B0: "<<B0<<endl;
+                 cout<<"S1: "<<S1<<endl;
+                 cout<<"S0: "<<S0<<endl;
+                 cout<<"C1: "<<C1<<endl;
+                 cout<<"C0: "<<C0<<endl;
+                 cout<<"M1: "<<M1<<endl;
+                 cout<<"M0: "<<M0<<endl;
+                 cout<<"R3: "<<R3<<endl;
+                 cout<<"R2: "<<R2<<endl;
+                 cout<<"R1: "<<R1<<endl;
+                 cout<<"R0: "<<R0<<endl;
+                 cout<<"SC1: "<<SC1<<endl;
+                 cout<<"SC0: "<<SC0<<endl;
+                 cout<<"ETB: "<<ETB<<endl;
+                 cout<<"SBB: "<<SBB<<endl;
+                 cout<<"ELB: "<<ELB<<endl;
+                 cout<<"SRB: "<<SRB<<endl;
+            }
+            if (IFVersion == 0x02){
+                 long IFLenght = HB2&0x1F;
+                 long Y = (PB1&0x60)>>5;
+                 switch (Y) {
+                 case 0x00:{
+                     cout<<"Y: "<< Y <<" : RGB (default)"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"Y: "<< Y <<" : YCBCR 4:2:2"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"Y: "<< Y <<" : YCBCR 4:4:4"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"Y: "<< Y <<" : *future*"<<endl;
+                     break;}
+                 default:{
+
+                     break;}
+                 }
+                 long A = PB1&0x10;
+                 switch (A) {
+                 case 0x00:{
+                     cout<<"A: "<< A <<" : No Active Format Information"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"A: "<< A <<" : Active Format (R3...R0) Information present"<<endl;
+                     break;}
+                 default:{
+
+                     break;}
+                 }
+                 long B = PB1&0x0C;
+                 switch (B) {
+                 case 0x00:{
+                     cout<<"B: "<< B <<" : Bar Data not present"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"B: "<< B <<" : Vert. Bar Info present"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"B: "<< B <<" : Horiz. Bar Info present"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"B: "<< B <<" : Vert. and Horiz. Bar Info present"<<endl;
+                     break;}
+                 default:{
+
+                     break;}
+                 }
+                 long S = PB1&0x03;
+                 switch (S) {
+                 case 0x00:{
+                     cout<<"S: "<< S <<" : No Data"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"S: "<< S <<" : Composed for an overscanned display, where some active pixels and lines at the edges are not displayed."<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"S: "<< S <<" : Composed for an underscanned display, where all active pixels & lines are displayed, with or without a border."<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"S: "<< S <<" : *future*"<<endl;
+                     break;}
+                 default:{
+
+                     break;}
+                 }
+                 long C = PB2&0xC0;
+                 switch (C) {
+                 case 0x00:{
+                     cout<<"C: "<< C <<" : No Data"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"C: "<< C <<" : SMPTE 170M [1]"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"C: "<< C <<" : ITU-R 709 [7]"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"C: "<< C <<" : Extended Colorimetry Information Valid"<<endl;
+                     break;}
+                 default:{
+
+                     break;}
+                 }
+                 long M = PB2&0x30;
+                 switch (M) {
+                 case 0x00:{
+                     cout<<"M: "<< M <<" : No Data"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"M: "<< M <<" : 4:3"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"M: "<< M <<" : 16:9"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"M: "<< M <<" : *future*"<<endl;
+                     break;}
+                 default:{
+
+                     break;}
+                 }
+                 long R  = PB2&0x0F;
+                 switch (R) {
+                 case 0x08:{
+                     cout<<"R: "<< R <<" : Same as coded frame aspect ratio"<<endl;
+                     break;}
+                 case 0x09:{
+                     cout<<"R: "<< R <<" : 4:3 (center)"<<endl;
+                     break;}
+                 case 0x0A:{
+                     cout<<"R: "<< R <<" : 16:9 (center)"<<endl;
+                     break;}
+                 case 0x0B:{
+                     cout<<"R: "<< R <<" : 14:9 (center)"<<endl;
+                     break;}
+                 default:{
+                     cout<<"R: "<< R <<" : Varies. See Annex H."<<endl;
+                     break;}
+                 }
+                 long ITC = PB3&0x80;
+                 switch (ITC) {
+                 case 0x00:{
+                     cout<<"IT content: "<< ITC <<" : No Data"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"IT content: "<< ITC <<" : IT content (Byte 5 CN bits valid)"<<endl;
+                     break;}
+                 default:{
+
+                     break;}
+                 }
+                 long EC = PB3&0x70;
+                 switch (EC) {
+                 case 0x00:{
+                     cout<<"Extended Colorimetry: "<< EC <<" : xvYCC601"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"Extended Colorimetry: "<< EC <<" : xvYCC709"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"Extended Colorimetry: "<< EC <<" : sYCC601"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"Extended Colorimetry: "<< EC <<" : AdobeYCC601"<<endl;
+                     break;}
+                 case 0x04:{
+                     cout<<"Extended Colorimetry: "<< EC <<" : AdobeRGB"<<endl;
+                     break;}
+                 default:{
+                     cout<<"EC: "<< EC <<endl;
+                     break;}
+                 }
+                 long Q = PB3&0x0C;
+                 switch (Q) {
+                 case 0x00:{
+                     cout<<"RGB Quanitization Range: "<< Q <<" : xvYCC601"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"RGB Quanitization Range: "<< Q <<" : xvYCC709"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"RGB Quanitization Range: "<< Q <<" : sYCC601"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"RGB Quanitization Range: "<< Q <<" : AdobeYCC601"<<endl;
+                     break;}
+                 case 0x04:{
+                     cout<<"RGB Quanitization Range: "<< Q <<" : AdobeRGB"<<endl;
+                     break;}
+                 default:{
+
+                     break;}}
+//                 long SC1 = PB3&0x02;
+//                 long SC0 = PB3&0x01;
+//                 long VCI6 = PB4&0x40;
+//                 long VCI5 = PB4&0x20;
+//                 long VCI4 = PB4&0x10;
+//                 long VCI3 = PB4&0x08;
+//                 long VCI2 = PB4&0x04;
+//                 long VCI1 = PB4&0x02;
+//                 long VCI0 = PB4&0x01;
+//                 long YQ1 = PB3&0x80;
+//                 long YQ0 = PB3&0x40;
+//                 long CN1 = PB3&0x20;
+//                 long CN0 = PB3&0x10;
+//                 long PR3 = PB4&0x08;
+//                 long PR2 = PB4&0x04;
+//                 long PR1 = PB4&0x02;
+//                 long PR0 = PB4&0x01;
+//                 long ETB = (PB5&0xFF) | (PB6&0xFF00);
+//                 long SBB = (PB7&0xFF) | (PB8&0xFF00);
+//                 long ELB = (PB9&0xFF) | (PB10&0xFF00);
+//                 long SRB = (PB11&0xFF) | (PB12&0xFF00);
+                 cout<<"Version: "<<IFVersion<<endl;
+                 cout<<"Length: "<<IFLenght<<endl;
+
+            }
             break;}
-        case 3:{
+        case 0x03:{
             cout<<"InfoFrame Type: Source Product Descriptor InfoFrame"<<endl;
+            long IFVersion = HB1;
+            long IFLenght = HB2&0x1F;
+            if ((IFVersion == 0x01) && (IFLenght == 25)){
+                 long VN1 = PB1&0xEF;
+                 long VN2 = PB2&0xEF;
+                 long VN3 = PB3&0xEF;
+                 long VN4 = PB4&0xEF;
+                 long VN5 = PB5&0xEF;
+                 long VN6 = PB6&0xEF;
+                 long VN7 = PB7&0xEF;
+                 long VN8 = PB8&0xEF;
+                 long PD1 = PB9&0xEF;
+                 long PD2 = PB10&0xEF;
+                 long PD3 = PB11&0xEF;
+                 long PD4 = PB12&0xEF;
+                 long PD5 = PB13&0xEF;
+                 long PD6 = PB14&0xEF;
+                 long PD7 = PB15&0xEF;
+                 long PD8 = PB16&0xEF;
+                 long PD9 = PB17&0xEF;
+                 long PD10 = PB18&0xEF;
+                 long PD11 = PB19&0xEF;
+                 long PD12 = PB20&0xEF;
+                 long PD13 = PB21&0xEF;
+                 long PD14 = PB22&0xEF;
+                 long PD15 = PB23&0xEF;
+                 long PD16 = PB24&0xEF;
+                 long SourceINFO = PB25&0x20;
+                 cout<<"Version: "<<IFVersion<<endl;
+                 cout<<"Length: "<<IFLenght<<endl;
+                 cout<<"VN1: "<<VN1<<endl;
+                 cout<<"VN2: "<<VN2<<endl;
+                 cout<<"VN3: "<<VN3<<endl;
+                 cout<<"VN4: "<<VN4<<endl;
+                 cout<<"VN5: "<<VN5<<endl;
+                 cout<<"VN6: "<<VN6<<endl;
+                 cout<<"VN7: "<<VN7<<endl;
+                 cout<<"VN8: "<<VN8<<endl;
+                 cout<<"PD1: "<<PD1<<endl;
+                 cout<<"PD2: "<<PD2<<endl;
+                 cout<<"PD3: "<<PD3<<endl;
+                 cout<<"PD4: "<<PD4<<endl;
+                 cout<<"PD5: "<<PD5<<endl;
+                 cout<<"PD6: "<<PD6<<endl;
+                 cout<<"PD7: "<<PD7<<endl;
+                 cout<<"PD8: "<<PD8<<endl;
+                 cout<<"PD9: "<<PD9<<endl;
+                 cout<<"PD10: "<<PD10<<endl;
+                 cout<<"PD11: "<<PD11<<endl;
+                 cout<<"PD12: "<<PD12<<endl;
+                 cout<<"PD13: "<<PD13<<endl;
+                 cout<<"PD14: "<<PD14<<endl;
+                 cout<<"PD15: "<<PD15<<endl;
+                 cout<<"PD16: "<<PD16<<endl;
+                 cout<<"Source Informatrion: "<<SourceINFO<<endl;
+            }
             break;}
-        case 4:{
+        case 0x04:{
             cout<<"InfoFrame Type: Audio InfoFrame"<<endl;
+//            long IFVersion = HB1;
+//            long IFLenght = HB2&0x1F;
+//            if ((IFVersion == 0x01) && (IFLenght == 10)){
+//                 long CT3 = PB1&0x80;
+//                 long CT2 = PB1&0x40;
+//                 long CT1 = PB1&0x20;
+//                 long CT0 = PB1&0x10;
+//                 long CC2 = PB1&0x04;
+//                 long CC1 = PB1&0x02;
+//                 long CC0 = PB1&0x01;
+//                 long SF2 = PB2&0x10;
+//                 long SF1 = PB2&0x08;
+//                 long SF0 = PB2&0x04;
+//                 long SS1 = PB2&0x02;
+//                 long SS0 = PB2&0x01;
+//                 long CXT4 = PB3&0x10;
+//                 long CXT3 = PB3&0x40;
+//                 long CXT2 = PB3&0x20;
+//                 long CXT1 = PB3&0x10;
+//                 long CXT0 = PB3&0x04;
+//                 long CA7 = PB4&0x80;
+//                 long CA6 = PB4&0x40;
+//                 long CA5 = PB4&0x20;
+//                 long CA4 = PB4&0x10;
+//                 long CA3 = PB4&0x08;
+//                 long CA2 = PB4&0x04;
+//                 long CA1 = PB4&0x02;
+//                 long CA0 = PB4&0x01;
+//                 long DMINH = PB5&0x80;
+//                 long LSV3 = PB5&0x40;
+//                 long LSV2 = PB5&0x20;
+//                 long LSV1 = PB5&0x10;
+//                 long LSV0 = PB5&0x08;
+//                 long LFEPBL1 = PB5&0x02;
+//                 long LFEPBL0 = PB5&0x01;
+
+//                 cout<<"Version: "<<IFVersion<<endl;
+//                 cout<<"Length: "<<IFLenght<<endl;
+//                 cout<<"VN1: "<<VN1<<endl;
+//                 cout<<"VN2: "<<VN2<<endl;
+//                 cout<<"VN3: "<<VN3<<endl;
+//                 cout<<"VN4: "<<VN4<<endl;
+//                 cout<<"VN5: "<<VN5<<endl;
+//                 cout<<"VN6: "<<VN6<<endl;
+//                 cout<<"VN7: "<<VN7<<endl;
+//                 cout<<"VN8: "<<VN8<<endl;
+//                 cout<<"PD1: "<<PD1<<endl;
+//                 cout<<"PD2: "<<PD2<<endl;
+//                 cout<<"PD3: "<<PD3<<endl;
+//                 cout<<"PD4: "<<PD4<<endl;
+//                 cout<<"PD5: "<<PD5<<endl;
+//                 cout<<"PD6: "<<PD6<<endl;
+//                 cout<<"PD7: "<<PD7<<endl;
+//                 cout<<"PD8: "<<PD8<<endl;
+//                 cout<<"PD9: "<<PD9<<endl;
+//                 cout<<"PD10: "<<PD10<<endl;
+//                 cout<<"PD11: "<<PD11<<endl;
+//                 cout<<"PD12: "<<PD12<<endl;
+//                 cout<<"PD13: "<<PD13<<endl;
+//                 cout<<"PD14: "<<PD14<<endl;
+//                 cout<<"PD15: "<<PD15<<endl;
+//                 cout<<"PD16: "<<PD16<<endl;
+//                 cout<<"Source Informatrion: "<<SourceINFO<<endl;
+//            }
             break;}
-        case 5:{
+        case 0x05:{
             cout<<"InfoFrame Type: MPEG Source InfoFrame"<<endl;
             break;}
-        case 6:{
+        case 0x06:{
             cout<<"InfoFrame Type: NTSC VBI InfoFrame"<<endl;
             break;}
         default:
