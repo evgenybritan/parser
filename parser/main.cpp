@@ -603,7 +603,7 @@ int main() {
 
                      break;}
                  }
-                 long A = PB1&0x10;
+                 long A = (PB1&0x10)>>4;
                  switch (A) {
                  case 0x00:{
                      cout<<"A: "<< A <<" : No Active Format Information"<<endl;
@@ -615,7 +615,7 @@ int main() {
 
                      break;}
                  }
-                 long B = PB1&0x0C;
+                 long B = (PB1&0x0C)>>2;
                  switch (B) {
                  case 0x00:{
                      cout<<"B: "<< B <<" : Bar Data not present"<<endl;
@@ -633,7 +633,7 @@ int main() {
 
                      break;}
                  }
-                 long S = PB1&0x03;
+                 long S = (PB1&0x03);
                  switch (S) {
                  case 0x00:{
                      cout<<"S: "<< S <<" : No Data"<<endl;
@@ -651,7 +651,7 @@ int main() {
 
                      break;}
                  }
-                 long C = PB2&0xC0;
+                 long C = (PB2&0xC0)>>6;
                  switch (C) {
                  case 0x00:{
                      cout<<"C: "<< C <<" : No Data"<<endl;
@@ -669,7 +669,7 @@ int main() {
 
                      break;}
                  }
-                 long M = PB2&0x30;
+                 long M = (PB2&0x30)>>4;
                  switch (M) {
                  case 0x00:{
                      cout<<"M: "<< M <<" : No Data"<<endl;
@@ -687,7 +687,7 @@ int main() {
 
                      break;}
                  }
-                 long R  = PB2&0x0F;
+                 long R = (PB2&0x0F);
                  switch (R) {
                  case 0x08:{
                      cout<<"R: "<< R <<" : Same as coded frame aspect ratio"<<endl;
@@ -705,7 +705,7 @@ int main() {
                      cout<<"R: "<< R <<" : Varies. See Annex H."<<endl;
                      break;}
                  }
-                 long ITC = PB3&0x80;
+                 long ITC = (PB3&0x80)>>7;
                  switch (ITC) {
                  case 0x00:{
                      cout<<"IT content: "<< ITC <<" : No Data"<<endl;
@@ -717,7 +717,7 @@ int main() {
 
                      break;}
                  }
-                 long EC = PB3&0x70;
+                 long EC = (PB3&0x70)>>4;
                  switch (EC) {
                  case 0x00:{
                      cout<<"Extended Colorimetry: "<< EC <<" : xvYCC601"<<endl;
@@ -738,49 +738,476 @@ int main() {
                      cout<<"EC: "<< EC <<endl;
                      break;}
                  }
-                 long Q = PB3&0x0C;
+                 long Q = (PB3&0x0C)>>2;
                  switch (Q) {
                  case 0x00:{
-                     cout<<"RGB Quanitization Range: "<< Q <<" : xvYCC601"<<endl;
+                     cout<<"RGB Quanitization Range: "<< Q <<" : Default (depends on video format)"<<endl;
                      break;}
                  case 0x01:{
-                     cout<<"RGB Quanitization Range: "<< Q <<" : xvYCC709"<<endl;
+                     cout<<"RGB Quanitization Range: "<< Q <<" : Limit Range"<<endl;
                      break;}
                  case 0x02:{
-                     cout<<"RGB Quanitization Range: "<< Q <<" : sYCC601"<<endl;
+                     cout<<"RGB Quanitization Range: "<< Q <<" : Full Range"<<endl;
                      break;}
                  case 0x03:{
-                     cout<<"RGB Quanitization Range: "<< Q <<" : AdobeYCC601"<<endl;
-                     break;}
-                 case 0x04:{
-                     cout<<"RGB Quanitization Range: "<< Q <<" : AdobeRGB"<<endl;
+                     cout<<"RGB Quanitization Range: "<< Q <<" : Reserved"<<endl;
                      break;}
                  default:{
 
                      break;}}
-//                 long SC1 = PB3&0x02;
-//                 long SC0 = PB3&0x01;
-//                 long VCI6 = PB4&0x40;
-//                 long VCI5 = PB4&0x20;
-//                 long VCI4 = PB4&0x10;
-//                 long VCI3 = PB4&0x08;
-//                 long VCI2 = PB4&0x04;
-//                 long VCI1 = PB4&0x02;
-//                 long VCI0 = PB4&0x01;
-//                 long YQ1 = PB3&0x80;
-//                 long YQ0 = PB3&0x40;
-//                 long CN1 = PB3&0x20;
-//                 long CN0 = PB3&0x10;
-//                 long PR3 = PB4&0x08;
-//                 long PR2 = PB4&0x04;
-//                 long PR1 = PB4&0x02;
-//                 long PR0 = PB4&0x01;
-//                 long ETB = (PB5&0xFF) | (PB6&0xFF00);
-//                 long SBB = (PB7&0xFF) | (PB8&0xFF00);
-//                 long ELB = (PB9&0xFF) | (PB10&0xFF00);
-//                 long SRB = (PB11&0xFF) | (PB12&0xFF00);
+                 long SC = (PB3&0x03);
+                 switch (SC) {
+                 case 0x00:{
+                     cout<<"Non-Uniform Picture Scaling: "<< SC <<" : No Know non-uniform Scaling"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"Non-Uniform Picture Scaling: "<< SC <<" : Picture has been scaled horizontally"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"Non-Uniform Picture Scaling: "<< SC <<" : Picture has been scaled vertically"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"Non-Uniform Picture Scaling: "<< SC <<" : Picture has been scaled horizontally and vertically"<<endl;
+                     break;}
+                 default:{
+
+                     break;}}
+                 long VIC = (PB4&0x7F);
+                 switch (VIC) {
+                 case 1:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"640x480p @ 59.94/60Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 2:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720x480p @ 59.94/60Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 3:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720x480p @ 59.94/60Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 4:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1280x720p @ 59.94/60Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 5:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1920x1080i @ 59.94/60Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 6:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720(1440)x480i @ 59.94/60Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 7:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720(1440)x480i @ 59.94/60Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 8:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720(1440)x240p @ 59.94/60Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 9:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720(1440)x240p @ 59.94/60Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 10:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"2880x480i @ 59.94/60Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 10 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     break;}
+                 case 11:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"2880x480i @ 59.94/60Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 10 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     break;}
+                 case 12:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"2880x240p @ 59.94/60Hz"<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 10 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     break;}
+                 case 13:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"2880x240p @ 59.94/60Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 10 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     break;}
+                 case 14:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1440x480p @ 59.94/60Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     break;}
+                 case 15:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1440x480p @ 59.94/60Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     break;}
+                 case 16:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1920x1080p @ 59.94/60Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 17:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720x576p @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 18:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720x576p @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 19:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1280x720p @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 20:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1920x1080i @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 21:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720(1440)x576i @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 22:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720(1440)x576i @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 23:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720(1440)x288p @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 24:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720(1440)x288p @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 25:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"2880x576i @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 10 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     break;}
+                 case 26:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"2880x576i @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 10 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     break;}
+                 case 27:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"2880x288p @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 10 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     break;}
+                 case 28:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"2880x288p @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 10 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     break;}
+                 case 29:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1440x576p @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 or 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     break;}
+                 case 30:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1440x576p @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 or 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     break;}
+                 case 31:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1920x1080p @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 32:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1920x1080p @ 23.98/24Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 33:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1920x1080p @ 25Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 34:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1920x1080p @ 29.98/30Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 35:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"2880x480p @ 59.94/60Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1, 2 or 4 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     break;}
+                 case 36:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"2880x480p @ 59.94/60Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1, 2 or 4 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     break;}
+                 case 37:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"2880x576p @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1, 2 or 4 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     break;}
+                 case 38:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"2880x576p @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1, 2 or 4 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     break;}
+                 case 39:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1920x1080i (1250) @ 50Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 40:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1920x1080i @ 100Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 41:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1280x720p @ 100Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 42:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720x576p @ 100Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 43:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720x576p @ 100Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     break;}
+                 case 44:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720(1440)x576i @ 100Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 45:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720(1440)x576i @ 100Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 46:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1920x1080i @ 119.88/120Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 47:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1280x720p @ 119.88/120Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 48:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720x480p @ 119.88/120Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 49:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720x480p @ 119.88/120Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 50:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720(1440)x480i @ 119.88/120Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 51:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720(1440)x480i @ 119.88/120Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 52:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720x576p @ 200Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 53:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720x576p @ 200Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 54:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720(1440)x576i @ 200Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 55:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720(1440)x576i @ 200Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 56:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720x480p @ 239.76/240Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 57:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720x480p @ 239.76/240Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 58:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720(1440)x480i @ 239.76/240Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 59:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"720(1440)x480i @ 239.76/240Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 60:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1280x720p @ 23.97Hz/24Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 61:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1280x720p @ 25Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 62:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1280x720p @ 29.97Hz/30Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 63:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1920x1080p @ 119.88Hz/120Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 case 64:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     cout<<"Video Description: "<<"1920x1080p @ 100Hz "<<endl;
+                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     break;}
+                 default:{
+                     cout<<"VIC: "<< VIC <<endl;
+                     break;}}
+                 long YQ = (PB3&0xC0)>>6;
+                 switch (YQ) {
+                 case 0x00:{
+                     cout<<"YCC Quanitization Range: "<< YQ <<" : Limited Range"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"YCC Quanitization Range: "<< YQ <<" : Full Range"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"YCC Quanitization Range: "<< YQ <<" : Reserved"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"YCC Quanitization Range: "<< YQ <<" : Reserved"<<endl;
+                     break;}
+                 default:{
+
+                     break;}}
+                 long CN = (PB3&0x30)>>4;
+                 switch (CN) {
+                 case 0x00:{
+                     cout<<"IT Content Type: "<< CN <<" : Graphics"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"IT Content Type: "<< CN <<" : Photo"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"IT Content Type: "<< CN <<" : Cinema"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"IT Content Type: "<< CN <<" : Game"<<endl;
+                     break;}
+                 default:{
+
+                     break;}}
+                 long PR3 = PB4&0x08;
+                 long PR2 = PB4&0x04;
+                 long PR1 = PB4&0x02;
+                 long PR0 = PB4&0x01;
+                 long ETB = (PB5&0xFF) | (PB6&0xFF00);
+                 long SBB = (PB7&0xFF) | (PB8&0xFF00);
+                 long ELB = (PB9&0xFF) | (PB10&0xFF00);
+                 long SRB = (PB11&0xFF) | (PB12&0xFF00);
                  cout<<"Version: "<<IFVersion<<endl;
                  cout<<"Length: "<<IFLenght<<endl;
+                 cout<<"ETB: "<<ETB<<endl;
+                 cout<<"SBB: "<<SBB<<endl;
+                 cout<<"ELB: "<<ELB<<endl;
+                 cout<<"SRB: "<<SRB<<endl;
 
             }
             break;}
@@ -845,70 +1272,69 @@ int main() {
             break;}
         case 0x04:{
             cout<<"InfoFrame Type: Audio InfoFrame"<<endl;
-//            long IFVersion = HB1;
-//            long IFLenght = HB2&0x1F;
-//            if ((IFVersion == 0x01) && (IFLenght == 10)){
-//                 long CT3 = PB1&0x80;
-//                 long CT2 = PB1&0x40;
-//                 long CT1 = PB1&0x20;
-//                 long CT0 = PB1&0x10;
-//                 long CC2 = PB1&0x04;
-//                 long CC1 = PB1&0x02;
-//                 long CC0 = PB1&0x01;
-//                 long SF2 = PB2&0x10;
-//                 long SF1 = PB2&0x08;
-//                 long SF0 = PB2&0x04;
-//                 long SS1 = PB2&0x02;
-//                 long SS0 = PB2&0x01;
-//                 long CXT4 = PB3&0x10;
-//                 long CXT3 = PB3&0x40;
-//                 long CXT2 = PB3&0x20;
-//                 long CXT1 = PB3&0x10;
-//                 long CXT0 = PB3&0x04;
-//                 long CA7 = PB4&0x80;
-//                 long CA6 = PB4&0x40;
-//                 long CA5 = PB4&0x20;
-//                 long CA4 = PB4&0x10;
-//                 long CA3 = PB4&0x08;
-//                 long CA2 = PB4&0x04;
-//                 long CA1 = PB4&0x02;
-//                 long CA0 = PB4&0x01;
-//                 long DMINH = PB5&0x80;
-//                 long LSV3 = PB5&0x40;
-//                 long LSV2 = PB5&0x20;
-//                 long LSV1 = PB5&0x10;
-//                 long LSV0 = PB5&0x08;
-//                 long LFEPBL1 = PB5&0x02;
-//                 long LFEPBL0 = PB5&0x01;
+            long IFVersion = HB1;
+            long IFLenght = HB2&0x1F;
+            if ((IFVersion == 0x01) && (IFLenght == 10)){
+                 long CT3 = PB1&0x80;
+                 long CT2 = PB1&0x40;
+                 long CT1 = PB1&0x20;
+                 long CT0 = PB1&0x10;
+                 long CC1 = PB1&0x02;
+                 long CC0 = PB1&0x01;
+                 long SF2 = PB2&0x10;
+                 long SF1 = PB2&0x08;
+                 long SF0 = PB2&0x04;
+                 long SS1 = PB2&0x02;
+                 long SS0 = PB2&0x01;
+                 long CXT4 = PB3&0x10;
+                 long CXT3 = PB3&0x40;
+                 long CXT2 = PB3&0x20;
+                 long CXT1 = PB3&0x10;
+                 long CXT0 = PB3&0x04;
+                 long CA7 = PB4&0x80;
+                 long CA6 = PB4&0x40;
+                 long CA5 = PB4&0x20;
+                 long CA4 = PB4&0x10;
+                 long CA3 = PB4&0x08;
+                 long CA2 = PB4&0x04;
+                 long CA1 = PB4&0x02;
+                 long CA0 = PB4&0x01;
+                 long DMINH = PB5&0x80;
+                 long LSV3 = PB5&0x40;
+                 long LSV2 = PB5&0x20;
+                 long LSV1 = PB5&0x10;
+                 long LSV0 = PB5&0x08;
+                 long LFEPBL1 = PB5&0x02;
+                 long LFEPBL0 = PB5&0x01;
 
-//                 cout<<"Version: "<<IFVersion<<endl;
-//                 cout<<"Length: "<<IFLenght<<endl;
-//                 cout<<"VN1: "<<VN1<<endl;
-//                 cout<<"VN2: "<<VN2<<endl;
-//                 cout<<"VN3: "<<VN3<<endl;
-//                 cout<<"VN4: "<<VN4<<endl;
-//                 cout<<"VN5: "<<VN5<<endl;
-//                 cout<<"VN6: "<<VN6<<endl;
-//                 cout<<"VN7: "<<VN7<<endl;
-//                 cout<<"VN8: "<<VN8<<endl;
-//                 cout<<"PD1: "<<PD1<<endl;
-//                 cout<<"PD2: "<<PD2<<endl;
-//                 cout<<"PD3: "<<PD3<<endl;
-//                 cout<<"PD4: "<<PD4<<endl;
-//                 cout<<"PD5: "<<PD5<<endl;
-//                 cout<<"PD6: "<<PD6<<endl;
-//                 cout<<"PD7: "<<PD7<<endl;
-//                 cout<<"PD8: "<<PD8<<endl;
-//                 cout<<"PD9: "<<PD9<<endl;
-//                 cout<<"PD10: "<<PD10<<endl;
-//                 cout<<"PD11: "<<PD11<<endl;
-//                 cout<<"PD12: "<<PD12<<endl;
-//                 cout<<"PD13: "<<PD13<<endl;
-//                 cout<<"PD14: "<<PD14<<endl;
-//                 cout<<"PD15: "<<PD15<<endl;
-//                 cout<<"PD16: "<<PD16<<endl;
-//                 cout<<"Source Informatrion: "<<SourceINFO<<endl;
-//            }
+                 cout<<"Version: "<<IFVersion<<endl;
+                 cout<<"Length: "<<IFLenght<<endl;
+                 cout<<"VN1: "<<VN1<<endl;
+                 cout<<"VN2: "<<VN2<<endl;
+                 cout<<"VN3: "<<VN3<<endl;
+                 cout<<"VN4: "<<VN4<<endl;
+                 cout<<"VN5: "<<VN5<<endl;
+                 cout<<"VN6: "<<VN6<<endl;
+                 cout<<"VN7: "<<VN7<<endl;
+                 cout<<"VN8: "<<VN8<<endl;
+                 cout<<"PD1: "<<PD1<<endl;
+                 cout<<"PD2: "<<PD2<<endl;
+                 cout<<"PD3: "<<PD3<<endl;
+                 cout<<"PD4: "<<PD4<<endl;
+                 cout<<"PD5: "<<PD5<<endl;
+                 cout<<"PD6: "<<PD6<<endl;
+                 cout<<"PD7: "<<PD7<<endl;
+                 cout<<"PD8: "<<PD8<<endl;
+                 cout<<"PD9: "<<PD9<<endl;
+                 cout<<"PD10: "<<PD10<<endl;
+                 cout<<"PD11: "<<PD11<<endl;
+                 cout<<"PD12: "<<PD12<<endl;
+                 cout<<"PD13: "<<PD13<<endl;
+                 cout<<"PD14: "<<PD14<<endl;
+                 cout<<"PD15: "<<PD15<<endl;
+                 cout<<"PD16: "<<PD16<<endl;
+                 cout<<"Source Informatrion: "<<SourceINFO<<endl;
+            }
             break;}
         case 0x05:{
             cout<<"InfoFrame Type: MPEG Source InfoFrame"<<endl;
