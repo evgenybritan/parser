@@ -33,7 +33,6 @@ const char *arr_type[]= {"Null",
                          "InfoFrame Packet"
                         };
 int main() {
-    
     int HB0=0;
     int HB1=0;
     int HB2=0;
@@ -538,46 +537,149 @@ int main() {
             long IFVersion = HB1;
             if (IFVersion == 0x01){
                  long IFLenght = HB2&0x1F;
-                 long Y1 = PB1&0x40;
-                 long Y0 = PB1&0x20;
-                 long A0 = PB1&0x10;
-                 long B1 = PB1&0x08;
-                 long B0 = PB1&0x04;
-                 long S1 = PB1&0x02;
-                 long S0 = PB1&0x01;
-                 long C1 = PB2&0x80;
-                 long C0 = PB2&0x40;
-                 long M1 = PB2&0x20;
-                 long M0 = PB2&0x10;
-                 long R3 = PB2&0x08;
-                 long R2 = PB2&0x04;
-                 long R1 = PB2&0x02;
-                 long R0 = PB2&0x01;
-                 long SC1 = PB3&0x02;
-                 long SC0 = PB3&0x01;
+                 cout<<"Version: "<<IFVersion<<endl;
+                 cout<<"Length: "<<IFLenght<<endl;
+                 long Y = (PB1&0x60)>>5;
+                 switch (Y) {
+                 case 0x00:{
+                     cout<<"Y: "<< Y <<" : RGB (default)"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"Y: "<< Y <<" : YCBCR 4:2:2"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"Y: "<< Y <<" : YCBCR 4:4:4"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"Y: "<< Y <<" : *future*"<<endl;
+                     break;}
+                 default:{
+
+                     break;}
+                 }
+                 long A = (PB1&0x10)>>4;
+                 switch (A) {
+                 case 0x00:{
+                     cout<<"A: "<< A <<" : No Active Format Information"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"A: "<< A <<" : Active Format (R3...R0) Information present"<<endl;
+                     break;}
+                 default:{
+
+                     break;}
+                 }
+                 long B = (PB1&0x0C)>>2;
+                 switch (B) {
+                 case 0x00:{
+                     cout<<"B: "<< B <<" : Bar Data not present"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"B: "<< B <<" : Vert. Bar Info present"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"B: "<< B <<" : Horiz. Bar Info present"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"B: "<< B <<" : Vert. and Horiz. Bar Info present"<<endl;
+                     break;}
+                 default:{
+
+                     break;}
+                 }
+                 long S = (PB1&0x03);
+                 switch (S) {
+                 case 0x00:{
+                     cout<<"S: "<< S <<" : No Data"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"S: "<< S <<" : Composed for an overscanned display, where some active pixels and lines at the edges are not displayed."<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"S: "<< S <<" : Composed for an underscanned display, where all active pixels & lines are displayed, with or without a border."<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"S: "<< S <<" : *future*"<<endl;
+                     break;}
+                 default:{
+
+                     break;}
+                 }
+                 long C = (PB2&0xC0)>>6;
+                 switch (C) {
+                 case 0x00:{
+                     cout<<"C: "<< C <<" : No Data"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"C: "<< C <<" : SMPTE 170M [1]"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"C: "<< C <<" : ITU-R 709 [7]"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"C: "<< C <<" : Extended Colorimetry Information Valid"<<endl;
+                     break;}
+                 default:{
+
+                     break;}
+                 }
+                 long M = (PB2&0x30)>>4;
+                 switch (M) {
+                 case 0x00:{
+                     cout<<"M: "<< M <<" : No Data"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"M: "<< M <<" : 4:3"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"M: "<< M <<" : 16:9"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"M: "<< M <<" : *future*"<<endl;
+                     break;}
+                 default:{
+
+                     break;}
+                 }
+                 long R = (PB2&0x0F);
+                 switch (R) {
+                 case 0x08:{
+                     cout<<"R: "<< R <<" : Same as coded frame aspect ratio"<<endl;
+                     break;}
+                 case 0x09:{
+                     cout<<"R: "<< R <<" : 4:3 (center)"<<endl;
+                     break;}
+                 case 0x0A:{
+                     cout<<"R: "<< R <<" : 16:9 (center)"<<endl;
+                     break;}
+                 case 0x0B:{
+                     cout<<"R: "<< R <<" : 14:9 (center)"<<endl;
+                     break;}
+                 default:{
+                     cout<<"R: "<< R <<" : Varies. See Annex H."<<endl;
+                     break;}
+                 }
+                 long SC = (PB3&0x03);
+                 switch (SC) {
+                 case 0x00:{
+                     cout<<"Non-Uniform Picture Scaling: "<< SC <<" : No Know non-uniform Scaling"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"Non-Uniform Picture Scaling: "<< SC <<" : Picture has been scaled horizontally"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"Non-Uniform Picture Scaling: "<< SC <<" : Picture has been scaled vertically"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"Non-Uniform Picture Scaling: "<< SC <<" : Picture has been scaled horizontally and vertically"<<endl;
+                     break;}
+                 default:{
+
+                     break;}}
                  long ETB = (PB5&0xFF) | (PB6&0xFF00);
                  long SBB = (PB7&0xFF) | (PB8&0xFF00);
                  long ELB = (PB9&0xFF) | (PB10&0xFF00);
                  long SRB = (PB11&0xFF) | (PB12&0xFF00);
-                 cout<<"Version: "<<IFVersion<<endl;
-                 cout<<"Length: "<<IFLenght<<endl;
-                 cout<<"Y1: "<<Y1<<endl;
-                 cout<<"Y0: "<<Y0<<endl;
-                 cout<<"A0: "<<A0<<endl;
-                 cout<<"B1: "<<B1<<endl;
-                 cout<<"B0: "<<B0<<endl;
-                 cout<<"S1: "<<S1<<endl;
-                 cout<<"S0: "<<S0<<endl;
-                 cout<<"C1: "<<C1<<endl;
-                 cout<<"C0: "<<C0<<endl;
-                 cout<<"M1: "<<M1<<endl;
-                 cout<<"M0: "<<M0<<endl;
-                 cout<<"R3: "<<R3<<endl;
-                 cout<<"R2: "<<R2<<endl;
-                 cout<<"R1: "<<R1<<endl;
-                 cout<<"R0: "<<R0<<endl;
-                 cout<<"SC1: "<<SC1<<endl;
-                 cout<<"SC0: "<<SC0<<endl;
                  cout<<"ETB: "<<ETB<<endl;
                  cout<<"SBB: "<<SBB<<endl;
                  cout<<"ELB: "<<ELB<<endl;
@@ -585,6 +687,8 @@ int main() {
             }
             if (IFVersion == 0x02){
                  long IFLenght = HB2&0x1F;
+                 cout<<"Version: "<<IFVersion<<endl;
+                 cout<<"Length: "<<IFLenght<<endl;
                  long Y = (PB1&0x60)>>5;
                  switch (Y) {
                  case 0x00:{
@@ -1194,16 +1298,46 @@ int main() {
                  default:{
 
                      break;}}
-                 long PR3 = PB4&0x08;
-                 long PR2 = PB4&0x04;
-                 long PR1 = PB4&0x02;
-                 long PR0 = PB4&0x01;
+                 long PR = PB4&0x0F;
+                 switch (PR) {
+                 case 0x00:{
+                     cout<<"Pixel Repetition Factor: "<< PR <<" : No Repetition (i.e., pixel date sent once)"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 2 times (i.e., repeated once)"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 3 times"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 4 times"<<endl;
+                     break;}
+                 case 0x04:{
+                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 5 times"<<endl;
+                     break;}
+                 case 0x05:{
+                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 6 times"<<endl;
+                     break;}
+                 case 0x06:{
+                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 7 times"<<endl;
+                     break;}
+                 case 0x07:{
+                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 8 times"<<endl;
+                     break;}
+                 case 0x08:{
+                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 9 times"<<endl;
+                     break;}
+                 case 0x09:{
+                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 10 times"<<endl;
+                     break;}
+                 default:{
+                     cout<<"Pixel Repetition Factor: "<< PR <<" : Reserved"<<endl;
+                     break;}
+                 }
                  long ETB = (PB5&0xFF) | (PB6&0xFF00);
                  long SBB = (PB7&0xFF) | (PB8&0xFF00);
                  long ELB = (PB9&0xFF) | (PB10&0xFF00);
                  long SRB = (PB11&0xFF) | (PB12&0xFF00);
-                 cout<<"Version: "<<IFVersion<<endl;
-                 cout<<"Length: "<<IFLenght<<endl;
                  cout<<"ETB: "<<ETB<<endl;
                  cout<<"SBB: "<<SBB<<endl;
                  cout<<"ELB: "<<ELB<<endl;
@@ -1240,72 +1374,6 @@ int main() {
                  long PD14 = PB22&0xEF;
                  long PD15 = PB23&0xEF;
                  long PD16 = PB24&0xEF;
-                 long SourceINFO = PB25&0x20;
-                 cout<<"Version: "<<IFVersion<<endl;
-                 cout<<"Length: "<<IFLenght<<endl;
-                 cout<<"VN1: "<<VN1<<endl;
-                 cout<<"VN2: "<<VN2<<endl;
-                 cout<<"VN3: "<<VN3<<endl;
-                 cout<<"VN4: "<<VN4<<endl;
-                 cout<<"VN5: "<<VN5<<endl;
-                 cout<<"VN6: "<<VN6<<endl;
-                 cout<<"VN7: "<<VN7<<endl;
-                 cout<<"VN8: "<<VN8<<endl;
-                 cout<<"PD1: "<<PD1<<endl;
-                 cout<<"PD2: "<<PD2<<endl;
-                 cout<<"PD3: "<<PD3<<endl;
-                 cout<<"PD4: "<<PD4<<endl;
-                 cout<<"PD5: "<<PD5<<endl;
-                 cout<<"PD6: "<<PD6<<endl;
-                 cout<<"PD7: "<<PD7<<endl;
-                 cout<<"PD8: "<<PD8<<endl;
-                 cout<<"PD9: "<<PD9<<endl;
-                 cout<<"PD10: "<<PD10<<endl;
-                 cout<<"PD11: "<<PD11<<endl;
-                 cout<<"PD12: "<<PD12<<endl;
-                 cout<<"PD13: "<<PD13<<endl;
-                 cout<<"PD14: "<<PD14<<endl;
-                 cout<<"PD15: "<<PD15<<endl;
-                 cout<<"PD16: "<<PD16<<endl;
-                 cout<<"Source Informatrion: "<<SourceINFO<<endl;
-            }
-            break;}
-        case 0x04:{
-            cout<<"InfoFrame Type: Audio InfoFrame"<<endl;
-            long IFVersion = HB1;
-            long IFLenght = HB2&0x1F;
-            if ((IFVersion == 0x01) && (IFLenght == 10)){
-                 long CT3 = PB1&0x80;
-                 long CT2 = PB1&0x40;
-                 long CT1 = PB1&0x20;
-                 long CT0 = PB1&0x10;
-                 long CC1 = PB1&0x02;
-                 long CC0 = PB1&0x01;
-                 long SF2 = PB2&0x10;
-                 long SF1 = PB2&0x08;
-                 long SF0 = PB2&0x04;
-                 long SS1 = PB2&0x02;
-                 long SS0 = PB2&0x01;
-                 long CXT4 = PB3&0x10;
-                 long CXT3 = PB3&0x40;
-                 long CXT2 = PB3&0x20;
-                 long CXT1 = PB3&0x10;
-                 long CXT0 = PB3&0x04;
-                 long CA7 = PB4&0x80;
-                 long CA6 = PB4&0x40;
-                 long CA5 = PB4&0x20;
-                 long CA4 = PB4&0x10;
-                 long CA3 = PB4&0x08;
-                 long CA2 = PB4&0x04;
-                 long CA1 = PB4&0x02;
-                 long CA0 = PB4&0x01;
-                 long DMINH = PB5&0x80;
-                 long LSV3 = PB5&0x40;
-                 long LSV2 = PB5&0x20;
-                 long LSV1 = PB5&0x10;
-                 long LSV0 = PB5&0x08;
-                 long LFEPBL1 = PB5&0x02;
-                 long LFEPBL0 = PB5&0x01;
 
                  cout<<"Version: "<<IFVersion<<endl;
                  cout<<"Length: "<<IFLenght<<endl;
@@ -1333,7 +1401,222 @@ int main() {
                  cout<<"PD14: "<<PD14<<endl;
                  cout<<"PD15: "<<PD15<<endl;
                  cout<<"PD16: "<<PD16<<endl;
-                 cout<<"Source Informatrion: "<<SourceINFO<<endl;
+                 long SourceINFO = PB25;
+                 switch (SourceINFO) {
+                 case 0x00:
+                     cout<<"Source Information: unknown ( "<<SourceINFO<<" )"<<endl;
+                     break;
+                 case 0x01:
+                     cout<<"Source Information: Digital STB ( "<<SourceINFO<<" )"<<endl;
+                     break;
+                 case 0x02:
+                     cout<<"Source Information: DVD player ( "<<SourceINFO<<" )"<<endl;
+                     break;
+                 case 0x03:
+                     cout<<"Source Information: D-VHS ( "<<SourceINFO<<" )"<<endl;
+                     break;
+                 case 0x04:
+                     cout<<"Source Information: HDD Videorecorder ( "<<SourceINFO<<" )"<<endl;
+                     break;
+                 case 0x05:
+                     cout<<"Source Information: DVC ( "<<SourceINFO<<" )"<<endl;
+                     break;
+                 case 0x06:
+                     cout<<"Source Information: DSC ( "<<SourceINFO<<" )"<<endl;
+                     break;
+                 case 0x07:
+                     cout<<"Source Information: Video CD ( "<<SourceINFO<<" )"<<endl;
+                     break;
+                 case 0x08:
+                     cout<<"Source Information: Game ( "<<SourceINFO<<" )"<<endl;
+                     break;
+                 case 0x09:
+                     cout<<"Source Information: PC general ( "<<SourceINFO<<" )"<<endl;
+                     break;
+                 case 0x0A:
+                     cout<<"Source Information: Blu-Ray Disk (BD) ( "<<SourceINFO<<" )"<<endl;
+                     break;
+                 case 0x0B:
+                     cout<<"Source Information: Super Audio CD ( "<<SourceINFO<<" )"<<endl;
+                     break;
+                 case 0x0C:
+                     cout<<"Source Information: HD DVD ( "<<SourceINFO<<" )"<<endl;
+                     break;
+                 case 0x0D:
+                     cout<<"Source Information: PMP ( "<<SourceINFO<<" )"<<endl;
+                     break;
+                 default:
+                     cout<<"Source Information: *reserved* ( "<<SourceINFO<<" )"<<endl;
+                     break;
+                 }
+            }
+            break;}
+        case 0x04:{
+            cout<<"InfoFrame Type: Audio InfoFrame"<<endl;
+            long IFVersion = HB1;
+            long IFLenght = HB2&0x1F;
+            if ((IFVersion == 1) && (IFLenght == 10)){
+                cout<<"Version: "<<IFVersion<<endl;
+                cout<<"Length: "<<IFLenght<<endl;
+                 long CT = PB1&0xF0;
+                 switch (CT) {
+                 case 0x00:{
+                     cout<<"CT="<< CT <<" >> Refer to Stream Header"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"CT="<< CT <<" >> Audio Coding Type: PCM ; Audio Stream Standard: IEC 60958-3 [13]"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"CT="<< CT <<" >> Audio Coding Type: AC-3 ; Audio Stream Encoding Standard: ATSC A/58B [12] excluding Annex E ; Audio Stream Transport Standart: IEC 61937-3 [15]"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"CT="<< CT <<" >> Audio Coding Type: MPEG-1 ; Audio Stream Encoding Standard: ISO/IEC 11172-3 [22] Layer 1 or Layer 2 ; Audio Stream Transport Standart: IEC 61937-4 [16]"<<endl;
+                     break;}
+                 case 0x04:{
+                     cout<<"CT="<< CT <<" >> Audio Coding Type: MP3 ; Audio Stream Encoding Standard: ISO/IEC 11172-3 [22] Layer 3 ; Audio Stream Transport Standart: IEC 61937-4 [16]"<<endl;
+                     break;}
+                 case 0x05:{
+                     cout<<"CT="<< CT <<" >> Audio Coding Type: MPEG2 ; Audio Stream Encoding Standard: ISO/IEC 13818-3 [23] ; Audio Stream Transport Standart: IEC 61937-4 [16]"<<endl;
+                     break;}
+                 case 0x06:{
+                     cout<<"CT="<< CT <<" >> Audio Coding Type: AAC LC ; Audio Stream Encoding Standard: ISO/IEC 14496-3 [24] ; Audio Stream Transport Standart: IEC 61937-6 [18]"<<endl;
+                     break;}
+                 case 0x07:{
+                     cout<<"CT="<< CT <<" >> Audio Coding Type: DTS; Audio Stream Encoding Standard: ETSI TS 102 114 [37] ; Audio Stream Transport Standart: IEC 61937-5 [17]"<<endl;
+                     break;}
+                 case 0x08:{
+                     cout<<"CT="<< CT <<" >> Audio Coding Type: ATRAC ; Audio Stream Encoding Standard: IEC 61909 [14] See also ATRAC [61] ; Audio Stream Transport Standart: IEC 61937-7 [19]"<<endl;
+                     break;}
+                 case 0x09:{
+                     cout<<"CT="<< CT <<" >> Audio Coding Type: DSD ; Audio Stream Standard: ISO/IEC 14496-3 [24], subpart 10, See also Super Audio CD [70]"<<endl;
+                     break;}
+                 case 0x0A:{
+                     cout<<"CT="<< CT <<" >> Audio Coding Type: E-AC-3 ; Audio Stream Encoding Standard: ATSC A/52B [12] with Annex E ; Audio Stream Transport Standart: IEC 61937-3 [15]"<<endl;
+                     break;}
+                 case 0x0B:{
+                     cout<<"CT="<< CT <<" >> Audio Coding Type: DTS-HD ; Audio Stream Encoding Standard: DVD Forum DTS-HD [28] ; Audio Stream Transport Standart: IEC 61937-5 [17]"<<endl;
+                     break;}
+                 case 0x0C:{
+                     cout<<"CT="<< CT <<" >> Audio Coding Type: MLP ; Audio Stream Encoding Standard: DVD Forum MLP [27] ; Audio Stream Transport Standart: IEC 61937-9 [21]"<<endl;
+                     break;}
+                 case 0x0D:{
+                     cout<<"CT="<< CT <<" >> Audio Coding Type: DST ; Audio Stream Standard:  ISO/IEC 14496-3 [24], subpart 10"<<endl;
+                     break;}
+                 case 0x0E:{
+                     cout<<"CT="<< CT <<" >> Audio Coding Type: WWA Pro ; Audio Stream Encoding Standard: WWA Pro Decoder Specification [30] ; Audio Stream Transport Standart: IEC 61937-8 [20]"<<endl;
+                     break;}
+                 case 0x0F:{
+                     cout<<"CT="<< CT <<" >> Refer to Audio Codding Extension Type (CXT) field in Data Byte 3"<<endl;
+                     break;}
+                 default:{
+
+                     break;}}
+                 long CC = PB1&0x07;
+                 switch (CC) {
+                 case 0x00:{
+                     cout<<"CС="<< CC <<" >> Refer to Stream Header"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"CС="<< CC <<" >> Audio Channel Count: 2 channels"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"CС="<< CC <<" >> Audio Channel Count: 3 channels"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"СС="<< CC <<" >> Audio Channel Count: 4 channels"<<endl;
+                     break;}
+                 case 0x04:{
+                     cout<<"CС="<< CC <<" >> Audio Channel Count: 5 channels"<<endl;
+                     break;}
+                 case 0x05:{
+                     cout<<"CС="<< CC <<" >> Audio Channel Count: 6 channels"<<endl;
+                     break;}
+                 case 0x06:{
+                     cout<<"CС="<< CC <<" >> Audio Channel Count: 7 channels"<<endl;
+                     break;}
+                 case 0x07:{
+                     cout<<"CС="<< CC <<" >> Audio Channel Count: 8 channels"<<endl;
+                     break;}
+                 default:{
+                     break;}}
+                 long SF = PB2&0x1C;
+                 switch (SF) {
+                 case 0x00:{
+                     cout<<"SF="<< SF <<" >> Refer to Stream Header"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"SF="<< SF <<" >> Samping Frequency: 32 kHz"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"SF="<< SF <<" >> Samping Frequency: 44.1 kHz (CD) "<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"SF="<< SF <<" >> Samping Frequency: 48 kHz "<<endl;
+                     break;}
+                 case 0x04:{
+                     cout<<"SF="<< SF <<" >> Samping Frequency: 88.2 kHz"<<endl;
+                     break;}
+                 case 0x05:{
+                     cout<<"SF="<< SF <<" >> Samping Frequency: 96 kHZ"<<endl;
+                     break;}
+                 case 0x06:{
+                     cout<<"SF="<< SF <<" >> Samping Frequency: 176.4 kHz"<<endl;
+                     break;}
+                 case 0x07:{
+                     cout<<"SF="<< SF <<" >> Samping Frequency: 192 kHz"<<endl;
+                     break;}
+                 default:{
+                     break;}}
+                 long SS = PB2&0x03;
+                 switch (SS) {
+                 case 0x00:{
+                     cout<<"SS="<< SS <<" >> Refer to Stream Header"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"SS="<< SS <<" >> Sample Size: 16bit"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"SS="<< SS <<" >> Sample Size: 20bit"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"SS="<< SS <<" >> Sample Size: 24bit"<<endl;
+                     break;}
+                 default:{
+                     break;}}
+                 long CXT = PB3&0x1F;
+                 switch (CXT) {
+                 case 0x00:{
+                     cout<<"CXT="<< CXT <<" >> Refer to Stream Header"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"CXT="<< CXT <<"  >> Audio Coding Extension Type: HE-AAC ; Audio Stream Encoding Standard: ISO/IEC 14496-3:2005 [24]; Audio Stream Transport Standart: IEC 61937-6 [18]"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"CXT="<< CXT <<"  >> Audio Coding Extension Type: HE-AAACv2 ; Audio Stream Encoding Standard: ISO/IEC 14496-3:2005/AMD2:2006 [25] ; Audio Stream Transport Standart: IEC 61937-6 [18]"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"CXT="<< CXT <<"  >> Audio Coding Extension Type: AC-3 ; Audio Stream Encoding Standard: ISO/IEC 230003-1:2007 [26]"<<endl;
+                     break;}
+                 default:{
+                     break;}}
+                 long CA = PB4&0xFF;
+                 switch (CA) {
+                 case 0x00:
+                     cout<<"top"<<endl;
+                     break;
+                 default:
+                     break;
+                 }
+                 long DMINH = PB5&0x80;
+                 long LSV3 = PB5&0x40;
+                 long LSV2 = PB5&0x20;
+                 long LSV1 = PB5&0x10;
+                 long LSV0 = PB5&0x08;
+                 long LFEPBL1 = PB5&0x02;
+                 long LFEPBL0 = PB5&0x01;
+
+
+
             }
             break;}
         case 0x05:{
