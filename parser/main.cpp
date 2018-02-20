@@ -485,19 +485,19 @@ int main() {
              long IFLenght = HB2&0x1F;
              if (IFVersion == 0x01){
                   long IEEE= PB1 | (PB2<<8) | (PB3<<16);
-                  long VA = (PB4&0xF0);
+                  long VA = (PB4&0xF0)>>4;
                   long VB = (PB4&0xF);
-                  long VC = (PB5&0xF0);
+                  long VC = (PB5&0xF0)>>4;
                   long VD = (PB5&0xF);
-                  long SupAI = (PB6&0x80);
-                  long DC48bit = (PB6&0x40);
-                  long DC36bit = (PB6&0x20);
-                  long DC30bit = (PB6&0x10);
-                  long DCY444 = (PB6&0x08);
-                  long DVIDUAL = (PB6&0x010);
+                  long SupAI = (PB6&0x80)>>7;
+                  long DC48bit = (PB6&0x40)>>6;
+                  long DC36bit = (PB6&0x20)>>5;
+                  long DC30bit = (PB6&0x10)>>4;
+                  long DCY444 = (PB6&0x08)>>3;
+                  long DVIDUAL = (PB6&0x01);
                   long MAXTMDS = (PB7);
-                  long LFP = (PB8&0x80);
-                  long ILFP = (PB8&0x40);
+                  long LFP = (PB8&0x80)>>7;
+                  long ILFP = (PB8&0x40)>>6;
                   cout<<"InfoFrame_version: "<<IFVersion<<endl;
                   cout<<"InfoFrame_length: "<<IFLenght<<endl;
                   cout<<"IEEE Registration Identifier: "<<IEEE<<endl;
@@ -1458,7 +1458,7 @@ int main() {
             if ((IFVersion == 1) && (IFLenght == 10)){
                 cout<<"Version: "<<IFVersion<<endl;
                 cout<<"Length: "<<IFLenght<<endl;
-                 long CT = PB1&0xF0;
+                 long CT = (PB1&0xF0)>>4;
                  switch (CT) {
                  case 0x00:{
                      cout<<"CT="<< CT <<" >> Refer to Stream Header"<<endl;
@@ -1535,7 +1535,7 @@ int main() {
                      cout<<"CС="<< CC <<" >> Audio Channel Count: 7 channels"<<endl;
                      break;}
                  case 0x07:{
-                     cout<<"CС="<< CC <<" >> Audio Channel Count: 8 channels"<<endl;
+                     cout<<"CC="<< CC <<" >> Audio Channel Count: 8 channels"<<endl;
                      break;}
                  default:{
                      break;}}
@@ -1598,22 +1598,247 @@ int main() {
                      cout<<"CXT="<< CXT <<"  >> Audio Coding Extension Type: AC-3 ; Audio Stream Encoding Standard: ISO/IEC 230003-1:2007 [26]"<<endl;
                      break;}
                  default:{
+                     cout<<"CXT="<< CXT <<" >> *reserved*"<<endl;
                      break;}}
                  long CA = PB4&0xFF;
+                 cout<<"|......|                   Channels:                   |"<<endl;
+                 cout<<"|  CA  |  8  |  7  |  6  |  5  |  4  |  3  |  2  |  1  |"<<endl;
                  switch (CA) {
+                 case 0x00:{
+                     cout<<"| 0x00 |  -  |  -  |  -  |  -  |  -  |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"| 0x01 |  -  |  -  |  -  |  -  |  -  | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"| 0x02 |  -  |  -  |  -  |  -  |  FC |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"| 0x03 |  -  |  -  |  -  |  -  |  FC | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x04:{
+                     cout<<"| 0x04 |  -  |  -  |  -  |  RC |  -  |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x05:{
+                     cout<<"| 0x05 |  -  |  -  |  -  |  RC |  -  | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x06:{
+                     cout<<"| 0x06 |  -  |  -  |  -  |  RC |  FC |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x07:{
+                     cout<<"| 0x07 |  -  |  -  |  -  |  RC |  FC | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x08:{
+                     cout<<"| 0x08 |  -  |  -  |  RR |  RL |  -  |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x09:{
+                     cout<<"| 0x09 |  -  |  -  |  RR |  RL |  -  | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x0A:{
+                     cout<<"| 0x0A |  -  |  -  |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x0B:{
+                     cout<<"| 0x0B |  -  |  -  |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x0C:{
+                     cout<<"| 0x0C |  -  |  RC |  RR |  RL |  -  |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x0D:{
+                     cout<<"| 0x0D |  -  |  RC |  RR |  RL |  -  | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x0E:{
+                     cout<<"| 0x0E |  -  |  RC |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x0F:{
+                     cout<<"| 0x0F |  -  |  RC |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x10:{
+                     cout<<"| 0x10 | RRC | RLC |  RR |  RL |  -  |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x11:{
+                     cout<<"| 0x11 | RRC | RLC |  RR |  RL |  -  | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x12:{
+                     cout<<"| 0x12 | RRC | RLC |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x13:{
+                     cout<<"| 0x13 | RRC | RLC |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x14:{
+                     cout<<"| 0x14 | FRC | FLC |  -  |  -  |  -  |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x15:{
+                     cout<<"| 0x15 | FRC | FLC |  -  |  -  |  -  | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x16:{
+                     cout<<"| 0x16 | FRC | FLC |  -  |  -  |  FC |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x17:{
+                     cout<<"| 0x17 | FRC | FLC |  -  |  -  |  FC | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x18:{
+                     cout<<"| 0x18 | FRC | FLC |  -  |  RC |  -  |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x19:{
+                     cout<<"| 0x19 | FRC | FLC |  -  |  RC |  -  | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x1A:{
+                     cout<<"| 0x1A | FRC | FLC |  -  |  RC |  FC |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x1B:{
+                     cout<<"| 0x1B | FRC | FLC |  -  |  RC |  FC | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x1C:{
+                     cout<<"| 0x1C | FRC | FLC |  RR |  RL |  -  |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x1D:{
+                     cout<<"| 0x1D | FRC | FLC |  RR |  RL |  -  | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x1E:{
+                     cout<<"| 0x1E | FRC | FLC |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x1F:{
+                     cout<<"| 0x1F | FRC | FLC |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x20:{
+                     cout<<"| 0x20 |  -  | FCH |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x21:{
+                     cout<<"| 0x21 |  -  | FCH |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x22:{
+                     cout<<"| 0x22 |  TC |  -  |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x23:{
+                     cout<<"| 0x23 |  TC |  -  |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x24:{
+                     cout<<"| 0x24 | FRH | FLH |  RR |  RL |  -  |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x25:{
+                     cout<<"| 0x25 | FRH | FLH |  RR |  RL |  -  | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x26:{
+                     cout<<"| 0x26 | FRW | FLW |  RR |  RL |  -  |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x27:{
+                     cout<<"| 0x27 | FRW | FLW |  RR |  RL |  -  | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x28:{
+                     cout<<"| 0x28 |  TC |  RC |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x29:{
+                     cout<<"| 0x29 |  TC |  RC |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x2A:{
+                     cout<<"| 0x2A | FCH |  RC |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x2B:{
+                     cout<<"| 0x2B | FCH |  RC |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x2C:{
+                     cout<<"| 0x2C |  TC | FCH |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x2D:{
+                     cout<<"| 0x2D |  TC | FCH |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x2E:{
+                     cout<<"| 0x2E | FRH | FLH |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x2F:{
+                     cout<<"| 0x2F | FRH | FLH |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x30:{
+                     cout<<"| 0x30 | FRW | FLW |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     break;}
+                 case 0x31:{
+                     cout<<"| 0x31 | FRW | FLW |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     break;}
+                 default:{
+                     cout<<"|"<<CA<<"|                  *reserved*                   |"<<endl;
+                     break;}
+                 }
+                 long DMINH = (PB5&0x80)>>7;
+                 switch (DMINH) {
                  case 0x00:
-                     cout<<"top"<<endl;
+                     cout<<"Mixed stereo output is: permitted or no information about any assertion of this"<<endl;
+                     break;
+                 case 0x01:
+                     cout<<"Mixed stereo output is: prohibited"<<endl;
                      break;
                  default:
                      break;
                  }
-                 long DMINH = PB5&0x80;
-                 long LSV3 = PB5&0x40;
-                 long LSV2 = PB5&0x20;
-                 long LSV1 = PB5&0x10;
-                 long LSV0 = PB5&0x08;
-                 long LFEPBL1 = PB5&0x02;
-                 long LFEPBL0 = PB5&0x01;
+                 long LSV = (PB5&0x78)>>3;
+                 switch (LSV) {
+                 case 0x00:{
+                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 0dB"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 1dB"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 2dB"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 3dB"<<endl;
+                     break;}
+                 case 0x04:{
+                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 4dB"<<endl;
+                     break;}
+                 case 0x05:{
+                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 5dB"<<endl;
+                     break;}
+                 case 0x06:{
+                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 6dB"<<endl;
+                     break;}
+                 case 0x07:{
+                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 7dB"<<endl;
+                     break;}
+                 case 0x08:{
+                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 8dB"<<endl;
+                     break;}
+                 case 0x09:{
+                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 9dB"<<endl;
+                     break;}
+                 case 0x0A:{
+                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 10dB"<<endl;
+                     break;}
+                 case 0x0B:{
+                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 11dB"<<endl;
+                     break;}
+                 case 0x0C:{
+                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 12dB"<<endl;
+                     break;}
+                 case 0x0D:{
+                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 13dB"<<endl;
+                     break;}
+                 case 0x0E:{
+                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 14dB"<<endl;
+                     break;}
+                 case 0x0F:{
+                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 15dB"<<endl;
+                     break;}
+                 default:
+                     break;
+                 }
+                 long LFEPBL = PB5&0x02;
+                 switch (LFEPBL) {
+                 case 0x00:{
+                     cout<<"LFEPBL="<< LFEPBL <<" >> LFE playback level: unknown or refer to other information"<<endl;
+                     break;}
+                 case 0x01:{
+                     cout<<"LFEPBL="<< LFEPBL <<" >> 0 dB playback"<<endl;
+                     break;}
+                 case 0x02:{
+                     cout<<"LFEPBL="<< LFEPBL <<" >> + 10 dB playback"<<endl;
+                     break;}
+                 case 0x03:{
+                     cout<<"LFEPBL="<< LFEPBL <<" >> *reserved*"<<endl;
+                     break;}
+                 default:
+                     break;
+                 }
 
 
 
@@ -1621,17 +1846,61 @@ int main() {
             break;}
         case 0x05:{
             cout<<"InfoFrame Type: MPEG Source InfoFrame"<<endl;
+            long IFVersion = HB1;
+            long IFLenght = HB2&0x1F;
+            if (IFVersion == 0x01){
+                cout<<"Version: "<<IFVersion<<endl;
+                cout<<"Length: "<<IFLenght<<endl;
+                long MB = (PB1) | ((PB2&0xFF)<<8)| ((PB3&0xFF)<<16)| ((PB4&0xFF)<<24);
+                cout<<"MPEG bit rate: "<<MB<<endl;
+                long FR = (PB5&0x10)>>4;
+                switch (FR) {
+                case 0x00:
+                    cout<<"FR="<<FR<<" >> Field Repeat: New field(picture) "<<endl;
+                    break;
+                case 0x01:
+                    cout<<"FR="<<FR<<" >> Field Repeat: Repeated Field "<<endl;
+                    break;
+                default:
+                    break;
+                }
+                long MF = PB5&0x03;
+                switch (MF) {
+                case 0x00:
+                    cout<<"MF="<<MF<<" >> Unknown (no data)"<<endl;
+                    break;
+                case 0x01:
+                    cout<<"MF="<<MF<<" >> I Picture"<<endl;
+                    break;
+                case 0x02:
+                    cout<<"MF="<<MF<<" >> B Picture"<<endl;
+                    break;
+                case 0x03:
+                    cout<<"MF="<<MF<<" >> P Picture"<<endl;
+                    break;
+                default:
+                    break;
+                }
+            }
             break;}
         case 0x06:{
             cout<<"InfoFrame Type: NTSC VBI InfoFrame"<<endl;
+            long IFVersion = HB1;
+            long IFLenght = HB2&0x1F;
+            if (IFVersion == 0x01){
+                cout<<"Version: "<<IFVersion<<endl;
+                cout<<"Length: "<<IFLenght<<endl;
+                int i;
+                int g;
+                long PES;
+                long PB = (PB0)| (PB1<<8) | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27;
+
+                }
+            }
             break;}
         default:
-            cout<<"invalid"<<endl;
+            cerr<<"invalid InfoFrame"<<endl;
             break;
-        }
-        long IFVersion = HB1;
-        long IFLenght = HB2&0x1F;
-        cout<<"InfoFrame_version: "<<IFVersion<<endl;
-        cout<<"InfoFrame_length: "<<IFLenght<<endl;
+        }    
     }
 }
