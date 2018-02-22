@@ -1890,17 +1890,100 @@ int main() {
             if (IFVersion == 0x01){
                 cout<<"Version: "<<IFVersion<<endl;
                 cout<<"Length: "<<IFLenght<<endl;
-                int i;
-                int g;
-                long PES;
-                long PB = (PB0)| (PB1<<8) | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27;
+                if (IFLenght>0){
+                    if (IFLenght>=1){
+                        long PES1=PB1;
+                        cout<< "PES1="<<PES1<<endl;
+                        if (IFLenght>=2){
+                            long PES2=PB2;
+                            cout<< "PES2="<<PES2<<endl;
+                            if (IFLenght>=3){long PES3=PB3;
+                                cout<< "PES3="<<PES3<<endl;
+                                if (IFLenght>=4){long PES4=PB4;
+                                    cout<< "PES4="<<PES4<<endl;
+                                    if (IFLenght>=5){long PES5=PB5;
+                                        cout<< "PES5="<<PES5<<endl;
+                                        if (IFLenght>=6){long PES6=PB6;
+                                            cout<< "PES6="<<PES6<<endl;
+                                            if (IFLenght>=7){long PES7=PB7;
+                                                cout<< "PES7="<<PES7<<endl;
+                                                if (IFLenght>=8){long PES8=PB8;
+                                                    cout<< "PES8="<<PES8<<endl;
+                                                    if (IFLenght>=9){long PES9=PB9;
+                                                        cout<< "PES9="<<PES9<<endl;
+                                                        if (IFLenght>=10){long PES10=PB10;
+                                                            cout<< "PES10="<<PES10<<endl;
+                                                            if (IFLenght>=11){long PES11=PB11;
+                                                                cout<< "PES11="<<PES11<<endl;
+                                                                if (IFLenght>=12){long PES12=PB12;
+                                                                    cout<< "PES12="<<PES12<<endl;
+                                                                    if (IFLenght>=13){long PES13=PB13;
+                                                                        cout<< "PES13="<<PES13<<endl;
+                                                                        if (IFLenght>=14){long PES14=PB14;
+                                                                            cout<< "PES14="<<PES14<<endl;
+                                                                            if (IFLenght>=15){long PES15=PB15;
+                                                                                cout<< "PES15="<<PES15<<endl;
+                                                                                if (IFLenght>=16){long PES16=PB16;
+                                                                                    cout<< "PES16="<<PES16<<endl;
+                                                                                    if (IFLenght>=17){long PES17=PB17;
+                                                                                        cout<< "PES17="<<PES17<<endl;
+                                                                                        if (IFLenght>=18){long PES18=PB18;
+                                                                                            cout<< "PES18="<<PES18<<endl;
+                                                                                            if (IFLenght>=19){long PES19=PB19;
+                                                                                                cout<< "PES19="<<PES19<<endl;
+                                                                                                if (IFLenght>=20){long PES20=PB20;
+                                                                                                    cout<< "PES20="<<PES20<<endl;
+                                                                                                    if (IFLenght>=21){long PES21=PB21;
+                                                                                                        cout<< "PES21="<<PES21<<endl;
+                                                                                                        if (IFLenght>=22){long PES22=PB22;
+                                                                                                            cout<< "PES22="<<PES22<<endl;
+                                                                                                            if (IFLenght>=23){long PES23=PB23;
+                                                                                                                cout<< "PES23="<<PES23<<endl;
+                                                                                                                if (IFLenght>=24){long PES24=PB24;
+                                                                                                                    cout<< "PES24="<<PES24<<endl;
+                                                                                                                    if (IFLenght>=25){long PES25=PB25;
+                                                                                                                        cout<< "PES25="<<PES25<<endl;
+                                                                                                                        if (IFLenght>=26){long PES26=PB26;
+                                                                                                                            cout<< "PES26="<<PES26<<endl;
+                                                                                                                            if (IFLenght>=27){long PES27=PB27;
+                                                                                                                                cout<< "PES27="<<PES27<<endl;
+
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
 
                 }
-            }
+
             break;}
-        default:
+        default:{
             cerr<<"invalid InfoFrame"<<endl;
-            break;
-        }    
+            break;}
+        }
     }
 }
