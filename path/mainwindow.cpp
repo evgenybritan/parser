@@ -59,71 +59,23 @@ extern int PB25;
 extern int PB26;
 extern int PB27;
 extern QString result;
-
+QString pathCheck;
 
 
 void MainWindow::on_pathstart_clicked()
 {
-
-    QString path = ui->path1->text();
-    QFile fileIn(path);
-    QFile fileOut("E://test_files/good.txt");
-        if(fileIn.open(QIODevice::ReadOnly) && fileOut.open(QIODevice::WriteOnly))
-        {
-            QByteArray Byte = fileIn.read(38);
-            fileOut.write(Byte);
-            HB0=Byte[0];
-            HB1=Byte[1];
-            HB2=Byte[2];
-            SB0=Byte[3];
-            SB1=Byte[4];
-            SB2=Byte[5];
-            SB3=Byte[6];
-            SB4=Byte[7];
-            SB5=Byte[8];
-            SB6=Byte[9];
-            PB0=Byte[10];
-            PB1=Byte[11];
-            PB2=Byte[12];
-            PB3=Byte[13];
-            PB4=Byte[14];
-            PB5=Byte[15];
-            PB6=Byte[16];
-            PB7=Byte[17];
-            PB8=Byte[18];
-            PB9=Byte[19];
-            PB10=Byte[20];
-            PB11=Byte[21];
-            PB12=Byte[22];
-            PB13=Byte[23];
-            PB14=Byte[24];
-            PB15=Byte[25];
-            PB16=Byte[26];
-            PB17=Byte[27];
-            PB18=Byte[28];
-            PB19=Byte[29];
-            PB20=Byte[30];
-            PB21=Byte[31];
-            PB22=Byte[32];
-            PB23=Byte[33];
-            PB24=Byte[34];
-            PB25=Byte[35];
-            PB26=Byte[36];
-            PB27=Byte[37];
-
-            parser_packet objParse;
-            objParse.parse();
+    extern QString path;
+    path = ui->path1->text();
+    parser_packet objParse;
+    objParse.parse();
+    QFile fileCheck(pathCheck);
+    if(fileCheck.open(QIODevice::ReadOnly))
+    {
             ui->textEdit->setText(result);
         }
-        else{
+    else{
             ui->textEdit->setText("Invalid path");
-        }
-
-
-
-
-fileIn.close();
-fileOut.close();
+    }
 
 }
 
