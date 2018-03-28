@@ -11,8 +11,11 @@ using namespace std;
 
 class parser_packet
 {
+private:
+    QString path;
 public:
-    void parse();
+    parser_packet(QString);
+    void parse(QString);
 };
 
 #endif // PARSER_H

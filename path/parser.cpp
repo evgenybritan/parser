@@ -76,18 +76,21 @@ int PB27;
 Packet_type pflag;
 QString result;
 QString arr;
-QString path;
-extern QString pathCheck;
-void parser_packet::parse(){
-    result = "";
-    pathCheck = path;
 
-    QFile fileIn(path);
-//    QFile fileOut("E://test_files/good.txt");
+parser_packet::parser_packet(QString get_path){
+    parse(get_path);
+}
+
+void parser_packet::parse(QString get_path){
+    result = "";
+    path=get_path;
+    QFile fileIn(get_path);
+//  QFile fileOut("E://test_files/good.txt");
+    QByteArray byte;
         if(fileIn.open(QIODevice::ReadOnly))
         {
             QByteArray Byte = fileIn.read(38);
-
+            byte=Byte;
             HB0=Byte[0];
             HB1=Byte[1];
             HB2=Byte[2];
@@ -125,27 +128,25 @@ void parser_packet::parse(){
             PB24=Byte[34];
             PB25=Byte[35];
             PB26=Byte[36];
-            PB27=Byte[37];}
-
-
-
+            PB27=Byte[37];
+        }
     switch (HB0) {
     case 0x00:
         pflag=Packet_type(HB0);
         arr= arr_type[pflag];
-        result+= "Packet type: " + arr + "\n"  ;
+        result+= "Packet type: " + arr + " \n"  ;
         break;
     case 0x01:
         pflag=Packet_type(HB0);
         arr= arr_type[pflag];
-        result+= "Packet type: " + arr + "\n"  ;
+        result+= "Packet type: " + arr + " \n"  ;
         if ((HB1 | HB2 | SB0 |(SB1>>4) | (SB4>>4)) == 0){
-            long CTS = (SB1<<16)|(SB2<<8)|SB3;
-            long N = (SB4<< 16)|(SB5<<8)|SB6;
+            long CTS = (SB1+16)|(SB2+8)|SB3;
+            long N = (SB4+ 16)|(SB5+8)|SB6;
             QString cts = QString::number(CTS);
             QString n = QString::number(N);
-            result+= "СTS: " + cts + "\n"  ;
-            result+= "N: " + n + "\n"  ;
+            result+= "СTS: " + cts + " \n"  ;
+            result+= "N: " + n + " \n"  ;
         }
         else{
             result+= "*invalid packet* \n"  ;
@@ -154,14 +155,14 @@ void parser_packet::parse(){
     case 0x02:
         pflag=Packet_type(HB0);
         arr= arr_type[pflag];
-        result+= "Packet type: " + arr + "\n"  ;
+        result+= "Packet type: " + arr + " \n"  ;
         if ((HB1>>5) == 0){
               long layout = HB1&0x10;
               long spX = HB1&0xF;
               long sfX = HB2&0xF;
               long B = HB2&(0xF0);
-              long L = (SB0<<4)|(SB1<<12)|(SB2<<20);
-              long R = (SB3<<4)|(SB4<<12)|(SB5<<20);
+              long L = (SB0+4)|(SB1+12)|(SB2+20);
+              long R = (SB3+4)|(SB4+12)|(SB5+20);
               long Vl =(SB6&0x01);
               long Vr =(SB6&0x10);
               long Ul =(SB6&0x02);
@@ -184,20 +185,20 @@ void parser_packet::parse(){
               QString cr = QString::number(Cr);
               QString pl = QString::number(Pl);
               QString pr = QString::number(Pr);
-              result+= "Layout: " + lay + "\n"  ;
-              result+= "sample_present.spX: " + spx + "\n"  ;
-              result+= "sample_flat.spX: " + sfx + "\n"  ;
-              result+= "B: " + b + "\n"  ;
-              result+= "L: " + l + "\n"  ;
-              result+= "R: " + r + "\n"  ;
-              result+= "Vl: " + vl + "\n"  ;
-              result+= "Vr: " + vr + "\n"  ;
-              result+= "Ul: " + ul + "\n"  ;
-              result+= "Ur: " + ur + "\n"  ;
-              result+= "Cl: " + cl + "\n"  ;
-              result+= "Cr: " + cr + "\n"  ;
-              result+= "Pl: " + pl + "\n"  ;
-              result+= "Pr: " + pr + "\n"  ;
+              result+= "Layout: " + lay + " \n"  ;
+              result+= "sample_present.spX: " + spx + " \n"  ;
+              result+= "sample_flat.spX: " + sfx + " \n"  ;
+              result+= "B: " + b + " \n"  ;
+              result+= "L: " + l + " \n"  ;
+              result+= "R: " + r + " \n"  ;
+              result+= "Vl: " + vl + " \n"  ;
+              result+= "Vr: " + vr + " \n"  ;
+              result+= "Ul: " + ul + " \n"  ;
+              result+= "Ur: " + ur + " \n"  ;
+              result+= "Cl: " + cl + " \n"  ;
+              result+= "Cr: " + cr + " \n"  ;
+              result+= "Pl: " + pl + " \n"  ;
+              result+= "Pr: " + pr + " \n"  ;
          }
         else{
             result+= "*invalid packet* \n"  ;
@@ -206,7 +207,7 @@ void parser_packet::parse(){
     case 0x03:
         pflag=Packet_type(HB0);
         arr= arr_type[pflag];
-        result+= "Packet type: " + arr + "\n"  ;
+        result+= "Packet type: " + arr + " \n"  ;
         if ((HB1 | HB2 | (SB0&0xEE) | (SB2>>1) | SB3 | SB4 | SB5 | SB6 )==0){
              long setAVMUTE = (SB0&0x01);
              long clearAVMUTE = (SB0&0x10);
@@ -218,11 +219,11 @@ void parser_packet::parse(){
              QString pp = QString::number(PP);
              QString cd = QString::number(CD);
              QString defaultphase = QString::number(defaultPhase);
-             result+= "Set_AVMUTE: " + steavmute + "\n"  ;
-             result+= "Clear_AVMUTE: " + clearavmute + "\n"  ;
-             result+= "PP: " + pp + "\n"  ;
-             result+= "CD: " + cd + "\n"  ;
-             result+= "Default_Phase: " + defaultphase + "\n"  ;
+             result+= "Set_AVMUTE: " + steavmute + " \n"  ;
+             result+= "Clear_AVMUTE: " + clearavmute + " \n"  ;
+             result+= "PP: " + pp + " \n"  ;
+             result+= "CD: " + cd + " \n"  ;
+             result+= "Default_Phase: " + defaultphase + " \n"  ;
 
          }
         else{
@@ -232,7 +233,7 @@ void parser_packet::parse(){
     case 0x04:
         pflag=Packet_type(HB0);
         arr= arr_type[pflag];
-         "Packet type: " + arr + "\n"  ;
+         "Packet type: " + arr + " \n"  ;
         if (HB2 == 0){
             switch (HB1) {
             case 0x00:
@@ -241,32 +242,36 @@ void parser_packet::parse(){
                 break;
             case 0x01:
                 if ((PB0 | PB1 | PB2 | PB3 | PB4 | PB5 |PB6 | PB7 | PB8 |PB9 | PB10 | PB11 |PB12 | PB13 | PB14 |PB15 | PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27)==0){
-                cout<<"ACP_Type: IEC 60958-Identified Audio"<<endl;}
+                result+="ACP_Type: IEC 60958-Identified Audio \n";}
                 break;
             case 0x02:
-                cout<<"ACP_Type: DVD-Audio"<<endl;
+                result+="ACP_Type: DVD-Audio \n";
             if ((PB2 | PB3 | PB4 | PB5 |PB6 | PB7 | PB8 |PB9 | PB10 | PB11 |PB12 | PB13 | PB14 |PB15 | PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27)==0){
                     long DATDG = (PB0&0xFF);
                     long CopyP = (PB1&0xC0);
                     long CopyN = (PB1&0x38);
                     long Quality = (PB1&0x06);
                     long Trans = (PB1&0x01);
-                    cout<<"DVD-Audio_Type_Dependent_Generation: "<<DATDG<<endl;
-                    cout<<"Copy_Permission: "<<CopyP<<endl;
-                    cout<<"Copy_Number: "<<CopyN<<endl;
-                    cout<<"Quality: "<<Quality<<endl;
-                    cout<<"Transaction: "<<Trans<<endl;
+                    QString datdg = QString::number(DATDG);
+                    QString Copyp = QString::number(CopyP);
+                    QString Copyn = QString::number(CopyN);
+                    QString quality = QString::number(Quality);
+                    QString trans = QString::number(Trans);
+                    result+="DVD-Audio_Type_Dependent_Generation: "+datdg+" \n";
+                    result+="Copy_Permission: "+Copyp+" \n";
+                    result+="Copy_Number: "+Copyn+" \n";
+                    result+="Quality: "+quality+" \n";
+                    result+="Transaction: "+trans+" \n";
                 }
                 break;
            case 0x03:
-                cout<<"ACP_Type: Super Audio CD"<<endl;
+                result+="ACP_Type: Super Audio CD \n";
                 if ((PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27)==0){
                 long CCI = PB0 | PB1 | PB2 | PB3 | PB4 | PB5 | PB6 | PB7 | PB8 | PB9 | PB10 | PB11 | PB12 | PB13 | PB14 | PB15 ;
-                cout<<"CCI_1: "<<CCI<<endl;
+                QString cci = QString::number(CCI);
+                result+="CCI_1: "+cci+" \n";
                 }
             default:
-
-
                 break;
             }
 
@@ -275,14 +280,17 @@ void parser_packet::parse(){
     case 0x05:
         pflag=Packet_type(HB0);
         arr= arr_type[pflag];
-        result+= "Packet type: " + arr + "\n"  ;
+        result+= "Packet type: " + arr + " \n"  ;
         if (((HB1&0x38) == 0) && (HB2==0)) {
             long Cont = (HB1&0x80);
             long Status = (HB1&0x07);
             long Valid =(HB1&0x40);
-            cout<<"ISRC_Cont: "<<Cont<<endl;
-            cout<<"ISRC_Status: "<<Status<<endl;
-            cout<<"ISRC_Valid: "<<Valid<<endl;
+            QString cont = QString::number(Cont);
+            QString status = QString::number(Status);
+            QString valid = QString::number(Valid);
+            result+="ISRC_Cont: "+cont+" \n";
+            result+="ISRC_Status: "+status+" \n";
+            result+="ISRC_Valid: "+valid+" \n";
             if((PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27)==0){
                 long UEI0 = PB0;
                 long UEI1 = PB1;
@@ -300,29 +308,45 @@ void parser_packet::parse(){
                 long UEI13 = PB13;
                 long UEI14 = PB14;
                 long UEI15 = PB15;
-                cout<<"UPC_EAN_ISRC_0"<<UEI0<<endl;
-                cout<<"UPC_EAN_ISRC_1"<<UEI1<<endl;
-                cout<<"UPC_EAN_ISRC_2"<<UEI2<<endl;
-                cout<<"UPC_EAN_ISRC_3"<<UEI3<<endl;
-                cout<<"UPC_EAN_ISRC_4"<<UEI4<<endl;
-                cout<<"UPC_EAN_ISRC_5"<<UEI5<<endl;
-                cout<<"UPC_EAN_ISRC_6"<<UEI6<<endl;
-                cout<<"UPC_EAN_ISRC_7"<<UEI7<<endl;
-                cout<<"UPC_EAN_ISRC_8"<<UEI8<<endl;
-                cout<<"UPC_EAN_ISRC_9"<<UEI9<<endl;
-                cout<<"UPC_EAN_ISRC_10"<<UEI10<<endl;
-                cout<<"UPC_EAN_ISRC_11"<<UEI11<<endl;
-                cout<<"UPC_EAN_ISRC_12"<<UEI12<<endl;
-                cout<<"UPC_EAN_ISRC_13"<<UEI13<<endl;
-                cout<<"UPC_EAN_ISRC_14"<<UEI14<<endl;
-                cout<<"UPC_EAN_ISRC_15"<<UEI15<<endl;
+                QString uei0 = QString::number(UEI0);
+                QString uei1 = QString::number(UEI1);
+                QString uei2 = QString::number(UEI2);
+                QString uei3 = QString::number(UEI3);
+                QString uei4 = QString::number(UEI4);
+                QString uei5 = QString::number(UEI5);
+                QString uei6 = QString::number(UEI6);
+                QString uei7 = QString::number(UEI7);
+                QString uei8 = QString::number(UEI8);
+                QString uei9 = QString::number(UEI9);
+                QString uei10 = QString::number(UEI10);
+                QString uei11 = QString::number(UEI11);
+                QString uei12 = QString::number(UEI12);
+                QString uei13 = QString::number(UEI13);
+                QString uei14 = QString::number(UEI14);
+                QString uei15 = QString::number(UEI15);
+                result+="UPC_EAN_ISRC_0"+uei0+" \n";
+                result+="UPC_EAN_ISRC_1"+uei1+" \n";
+                result+="UPC_EAN_ISRC_2"+uei2+" \n";
+                result+="UPC_EAN_ISRC_3"+uei3+" \n";
+                result+="UPC_EAN_ISRC_4"+uei4+" \n";
+                result+="UPC_EAN_ISRC_5"+uei5+" \n";
+                result+="UPC_EAN_ISRC_6"+uei6+" \n";
+                result+="UPC_EAN_ISRC_7"+uei7+" \n";
+                result+="UPC_EAN_ISRC_8"+uei8+" \n";
+                result+="UPC_EAN_ISRC_9"+uei9+" \n";
+                result+="UPC_EAN_ISRC_10"+uei10+" \n";
+                result+="UPC_EAN_ISRC_11"+uei11+" \n";
+                result+="UPC_EAN_ISRC_12"+uei12+" \n";
+                result+="UPC_EAN_ISRC_13"+uei13+" \n";
+                result+="UPC_EAN_ISRC_14"+uei14+" \n";
+                result+="UPC_EAN_ISRC_15"+uei15+" \n";
             }
         }
         break;
     case 0x06:
         pflag=Packet_type(HB0);
         arr= arr_type[pflag];
-        result+= "Packet type: " + arr + "\n"  ;
+        result+= "Packet type: " + arr + " \n"  ;
         if ((HB1 == 0) && (HB2 == 0) && ((PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27)==0)){
             long UEI16 = PB0;
             long UEI17 = PB1;
@@ -340,28 +364,44 @@ void parser_packet::parse(){
             long UEI29 = PB13;
             long UEI30 = PB14;
             long UEI31 = PB15;
-            cout<<"UPC_EAN_ISRC_16"<<UEI16<<endl;
-            cout<<"UPC_EAN_ISRC_17"<<UEI17<<endl;
-            cout<<"UPC_EAN_ISRC_18"<<UEI18<<endl;
-            cout<<"UPC_EAN_ISRC_19"<<UEI19<<endl;
-            cout<<"UPC_EAN_ISRC_20"<<UEI20<<endl;
-            cout<<"UPC_EAN_ISRC_21"<<UEI21<<endl;
-            cout<<"UPC_EAN_ISRC_22"<<UEI22<<endl;
-            cout<<"UPC_EAN_ISRC_23"<<UEI23<<endl;
-            cout<<"UPC_EAN_ISRC_24"<<UEI24<<endl;
-            cout<<"UPC_EAN_ISRC_25"<<UEI25<<endl;
-            cout<<"UPC_EAN_ISRC_26"<<UEI26<<endl;
-            cout<<"UPC_EAN_ISRC_27"<<UEI27<<endl;
-            cout<<"UPC_EAN_ISRC_28"<<UEI28<<endl;
-            cout<<"UPC_EAN_ISRC_29"<<UEI29<<endl;
-            cout<<"UPC_EAN_ISRC_30"<<UEI30<<endl;
-            cout<<"UPC_EAN_ISRC_31"<<UEI31<<endl;
+            QString uei16 = QString::number(UEI16);
+            QString uei17 = QString::number(UEI17);
+            QString uei18 = QString::number(UEI18);
+            QString uei19 = QString::number(UEI19);
+            QString uei20 = QString::number(UEI20);
+            QString uei21 = QString::number(UEI21);
+            QString uei22 = QString::number(UEI22);
+            QString uei23 = QString::number(UEI23);
+            QString uei24 = QString::number(UEI24);
+            QString uei25 = QString::number(UEI25);
+            QString uei26 = QString::number(UEI26);
+            QString uei27 = QString::number(UEI27);
+            QString uei28 = QString::number(UEI28);
+            QString uei29 = QString::number(UEI29);
+            QString uei30 = QString::number(UEI30);
+            QString uei31 = QString::number(UEI31);
+            result+="UPC_EAN_ISRC_16"+uei16+" \n";
+            result+="UPC_EAN_ISRC_17"+uei17+" \n";
+            result+="UPC_EAN_ISRC_18"+uei18+" \n";
+            result+="UPC_EAN_ISRC_19"+uei19+" \n";
+            result+="UPC_EAN_ISRC_20"+uei20+" \n";
+            result+="UPC_EAN_ISRC_21"+uei21+" \n";
+            result+="UPC_EAN_ISRC_22"+uei22+" \n";
+            result+="UPC_EAN_ISRC_23"+uei23+" \n";
+            result+="UPC_EAN_ISRC_24"+uei24+" \n";
+            result+="UPC_EAN_ISRC_25"+uei25+" \n";
+            result+="UPC_EAN_ISRC_26"+uei26+" \n";
+            result+="UPC_EAN_ISRC_27"+uei27+" \n";
+            result+="UPC_EAN_ISRC_28"+uei28+" \n";
+            result+="UPC_EAN_ISRC_29"+uei29+" \n";
+            result+="UPC_EAN_ISRC_30"+uei30+" \n";
+            result+="UPC_EAN_ISRC_31"+uei31+" \n";
         }
         break;
     case 0x07:
         pflag=Packet_type(HB0);
         arr= arr_type[pflag];
-        result+= "Packet type: " + arr + "\n"  ;
+        result+= "Packet type: " + arr + " \n"  ;
         if (((HB1&0xE0)==0) && ((HB2&0xF0)==0)){
             long layout1 = (HB1&0x10);
             long sp3 = (HB1&0x08);
@@ -372,50 +412,67 @@ void parser_packet::parse(){
             long si1 = (HB2&0x02);
             long si2 = (HB2&0x04);
             long si3 = (HB2&0x08);
-            long ChA = (SB0)|(SB1<<8)|(SB2<<16)|(SB6&0xF);
-            long ChB = (SB3)|(SB4<<8)|(SB5<<16)|(SB6&0xF);
-            cout<<"layout: "<<layout1<<endl;
-            cout<<"samples_present.sp0: "<<sp0<<endl;
-            cout<<"samples_present.sp1: "<<sp1<<endl;
-            cout<<"samples_present.sp2: "<<sp2<<endl;
-            cout<<"samples_present.sp3: "<<sp3<<endl;
-            cout<<"samples_invalid.sp0: "<<si0<<endl;
-            cout<<"samples_invalid.sp1: "<<si1<<endl;
-            cout<<"samples_invalid.sp2: "<<si2<<endl;
-            cout<<"samples_invalid.sp3: "<<si3<<endl;
-            cout<<"ChA: "<<ChA<<endl;
-            cout<<"ChB: "<<ChB<<endl;
+            long ChA = (SB0)|(SB1+8)|(SB2+16)|(SB6&0xF);
+            long ChB = (SB3)|(SB4+8)|(SB5+16)|(SB6&0xF);
+            QString lay1 = QString::number(layout1);
+            QString SP3 = QString::number(sp3);
+            QString SP2 = QString::number(sp2);
+            QString SP1 = QString::number(sp1);
+            QString SP0 = QString::number(sp0);
+            QString SI0 = QString::number(si0);
+            QString SI1 = QString::number(si1);
+            QString SI2 = QString::number(si2);
+            QString SI3 = QString::number(si3);
+            QString cha = QString::number(ChA);
+            QString chb = QString::number(ChB);
+
+            result+="layout: "+lay1+" \n";
+            result+="samples_present.sp0: "+SP0+" \n";
+            result+="samples_present.sp1: "+SP1+" \n";
+            result+="samples_present.sp2: "+SP2+" \n";
+            result+="samples_present.sp3: "+SP3+" \n";
+            result+="samples_invalid.sp0: "+SI0+" \n";
+            result+="samples_invalid.sp1: "+SI1+" \n";
+            result+="samples_invalid.sp2: "+SI2+" \n";
+            result+="samples_invalid.sp3: "+SI3+" \n";
+            result+="ChA: "+cha+" \n";
+            result+="ChB: "+chb+" \n";
         }
         break;
     case 0x08:
         pflag=Packet_type(HB0);
         arr= arr_type[pflag];
-        result+= "Packet type: " + arr + "\n"  ;
+        result+= "Packet type: " + arr + " \n"  ;
         if (((HB1&0x3E) == 0) && (HB2 == 0)){
             long frames = (HB1&0x80);
             long samplesi = (HB1&0x40);
             long DSTnd = (HB1&0x01);
             long Dx = PB0 | PB1 | PB2 | PB3 | PB4 | PB5 |PB6 | PB7 | PB8 |PB9 | PB10 | PB11 |PB12 | PB13 | PB14 |PB15 | PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27;
-            cout<<"farme_start: "<<frames<<endl;
-            cout<<"saqmples_invalid: "<<samplesi<<endl;
-            cout<<"DST_normal_double: "<<DSTnd<<endl;
-            cout<<"D.X: "<<Dx<<endl;
+            QString fram = QString::number(frames);
+            QString sam = QString::number(samplesi);
+            QString dst = QString::number(DSTnd);
+            QString dx = QString::number(Dx);
+            result+="farme_start: "+fram+" \n";
+            result+="saqmples_invalid: "+sam+" \n";
+            result+="DST_normal_double: "+dst+" \n";
+            result+="D.X: "+dx+" \n";
         }
         break;
     case 0x09:
         pflag=Packet_type(HB0);
         arr= arr_type[pflag];
-        result+= "Packet type: " + arr + "\n"  ;
+        result+= "Packet type: " + arr + " \n"  ;
         if ((HB1 == 0) && ((HB2&0xF) == 0)){
             long Bx = (HB2&0xF0);
-            cout<<"B.X: "<<Bx<<endl;
+            QString bx = QString::number(Bx);
+            result+="B.X: "+bx+" \n";
     }
 
         break;
     case 0x0A:
         pflag=Packet_type(HB0);
         arr= arr_type[pflag];
-        result+= "Packet type: " + arr + "\n"  ;
+        result+= "Packet type: " + arr + " \n"  ;
         if ((HB2&0x40)==0){
             long nextf = HB1&0x80;
             long nocrnt = HB2&0x80;
@@ -423,72 +480,94 @@ void parser_packet::parse(){
             long agsn = HB1&0xF;
             long cgsn = HB2&0xF;
             long packetseq = HB2&0x30;
-            cout<<"Next_Field: "<<nextf<<endl;
-            cout<<"No_Current_GBD: "<<nocrnt<<endl;
-            cout<<"GBD_profile: "<<GBDprof<<endl;
-            cout<<"Affected_Gamut_Seq_Num: "<<agsn<<endl;
-            cout<<"Current_Gamut_Seq_Num: "<<cgsn<<endl;
-            cout<<"Packet_Seq: "<<packetseq<<endl;
+            QString next = QString::number(nextf);
+            QString nocrn = QString::number(nocrnt);
+            QString GBDpro = QString::number(GBDprof);
+            QString ags = QString::number(agsn);
+            QString cgs = QString::number(cgsn);
+            QString packetse = QString::number(packetseq);
+            result+="Next_Field: "+next+" \n";
+            result+="No_Current_GBD: "+nocrn+" \n";
+            result+="GBD_profile: "+GBDpro+" \n";
+            result+="Affected_Gamut_Seq_Num: "+ags+" \n";
+            result+="Current_Gamut_Seq_Num: "+cgs+" \n";
+            result+="Packet_Seq: "+packetse+" \n";
             switch (GBDprof) {
                case 0:{
-                cout<<"P0"<<endl;
+                result+="P0 \n";
                 long GBD = PB0 | PB1 | PB2 | PB3 | PB4 | PB5 |PB6 | PB7 | PB8 |PB9 | PB10 | PB11 |PB12 | PB13 | PB14 |PB15 | PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27;
-                cout<<"GBD: "<<GBD<<endl;}
+                QString gbd  = QString::number(GBD);
+                result+="GBD: "+gbd+" \n";}
                 break;
                case 0x01:{
-                cout<<"P1"<<endl;
+                result+="P1\n";
                 if (packetseq == 0){
                     long GBDLengthH = (PB0);
                     long GBDLengthL = (PB1);
                     long Checksum = (PB2);
                     long GBD = PB3 | PB4 | PB5 |PB6 | PB7 | PB8 |PB9 | PB10 | PB11 |PB12 | PB13 | PB14 |PB15 | PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27;
-                    cout<<"GBD_Length_H: "<<GBDLengthH<<endl;
-                    cout<<"GBD_Length_L: "<<GBDLengthL<<endl;
-                    cout<<"Checksum: "<<Checksum<<endl;
-                    cout<<"GBD: "<<GBD<<endl;
+                    QString GBDLengthh  = QString::number(GBDLengthH);
+                    QString GBDLengthl = QString::number(GBDLengthL);
+                    QString Checksu = QString::number(Checksum);
+                    QString gbd  = QString::number(GBD);
+                    result+="GBD_Length_H: "+GBDLengthh+" \n";
+                    result+="GBD_Length_L: "+GBDLengthl+" \n";
+                    result+="Checksum: "+Checksu+" \n";
+                    result+="GBD: "+gbd+" \n";
                 }
 
                 else {
                     long GBD = PB0 | PB1 | PB2 | PB3 | PB4 | PB5 |PB6 | PB7 | PB8 |PB9 | PB10 | PB11 |PB12 | PB13 | PB14 |PB15 | PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27;
-                    cout<<"GBD: "<<GBD<<endl;
+                    QString gbd  = QString::number(GBD);
+                    result+="GBD: "+gbd+" \n";
                 }}
                 break;
             case 2:{
-                cout<<"P2"<<endl;
+                result+="P2 \n";
                 if (packetseq == 0){
                     long GBDLengthH = (PB0);
                     long GBDLengthL = (PB1);
                     long Checksum = (PB2);
                     long GBD = PB3 | PB4 | PB5 |PB6 | PB7 | PB8 |PB9 | PB10 | PB11 |PB12 | PB13 | PB14 |PB15 | PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27;
-                    cout<<"GBD_Length_H: "<<GBDLengthH<<endl;
-                    cout<<"GBD_Length_L: "<<GBDLengthL<<endl;
-                    cout<<"Checksum: "<<Checksum<<endl;
-                    cout<<"GBD: "<<GBD<<endl;
+                    QString GBDLengthh  = QString::number(GBDLengthH);
+                    QString GBDLengthl = QString::number(GBDLengthL);
+                    QString Checksu = QString::number(Checksum);
+                    QString gbd  = QString::number(GBD);
+                    result+="GBD_Length_H: "+GBDLengthh+" \n";
+                    result+="GBD_Length_L: "+GBDLengthl+" \n";
+                    result+="Checksum: "+Checksu+" \n";
+                    result+="GBD: "+gbd+" \n";
                 }
                 else {
                     long GBD = PB0 | PB1 | PB2 | PB3 | PB4 | PB5 |PB6 | PB7 | PB8 |PB9 | PB10 | PB11 |PB12 | PB13 | PB14 |PB15 | PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27;
-                    cout<<"GBD: "<<GBD<<endl;
+                    QString gbd  = QString::number(GBD);
+                    result+="GBD: "+gbd+" \n";
                 }}
                 break;
             case 3:{
-                cout<<"P3"<<endl;
+                result+="P3\n";
                 if (packetseq == 0){
                     long GBDLengthH = (PB0);
                     long GBDLengthL = (PB1);
                     long Checksum = (PB2);
                     long GBD = PB3 | PB4 | PB5 |PB6 | PB7 | PB8 |PB9 | PB10 | PB11 |PB12 | PB13 | PB14 |PB15 | PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27;
-                    cout<<"GBD_Length_H: "<<GBDLengthH<<endl;
-                    cout<<"GBD_Length_L: "<<GBDLengthL<<endl;
-                    cout<<"Checksum: "<<Checksum<<endl;
-                    cout<<"GBD: "<<GBD<<endl;
+                    QString GBDLengthh  = QString::number(GBDLengthH);
+                    QString GBDLengthl = QString::number(GBDLengthL);
+                    QString Checksu = QString::number(Checksum);
+                    QString gbd  = QString::number(GBD);
+                    result+="GBD_Length_H: "+GBDLengthh+" \n";
+                    result+="GBD_Length_L: "+GBDLengthl+" \n";
+                    result+="Checksum: "+Checksu+" \n";
+                    result+="GBD: "+gbd+" \n";
                 }
                 else {
                     long GBD = PB0 | PB1 | PB2 | PB3 | PB4 | PB5 |PB6 | PB7 | PB8 |PB9 | PB10 | PB11 |PB12 | PB13 | PB14 |PB15 | PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27;
-                    cout<<"GBD: "<<GBD<<endl;
+                    QString gbd  = QString::number(GBD);
+                    result+="GBD: "+gbd+" \n";
                 }
                 break;}
             default:{
-                        cout<<"check spicifications"<<endl;
+                        result+="check spicifications\n";
                 break;
             }}
 
@@ -497,46 +576,48 @@ void parser_packet::parse(){
     case 0x80 :
         pflag=Packet_type(11);
         arr= arr_type[pflag];
-        result+= "Packet type: " + arr + "\n"  ;
+        result+= "Packet type: " + arr + " \n"  ;
         break;
     case 0x81 :
         pflag=Packet_type(11);
         arr= arr_type[pflag];
-        result+= "Packet type: " + arr + "\n"  ;
+        result+= "Packet type: " + arr + " \n"  ;
         break;
     case 0x82 :
         pflag=Packet_type(11);
         arr= arr_type[pflag];
-        result+= "Packet type: " + arr + "\n"  ;
+        result+= "Packet type: " + arr + " \n"  ;
         break;
     case 0x83 :
         pflag=Packet_type(11);
         arr= arr_type[pflag];
-        result+= "Packet type: " + arr + "\n"  ;
+        result+= "Packet type: " + arr + " \n"  ;
         break;
     case 0x84 :
         pflag=Packet_type(11);
         arr= arr_type[pflag];
-        result+= "Packet type: " + arr + "\n"  ;
+        result+= "Packet type: " + arr + " \n"  ;
         break;
     case 0x85 :
         pflag=Packet_type(11);
         arr= arr_type[pflag];
-        result+= "Packet type: " + arr + "\n"  ;
+        result+= "Packet type: " + arr + " \n"  ;
         break;
     default:
-        cerr<<"invalid byte"<<endl;
+        result+="invalid byte\n";
         break;
     }
     if (((HB0&0x80) !=0) && ((HB2&0xE0) == 0)){
         long IFType = HB0&0x7F;
         switch (IFType) {
         case 0x01:{
-            cout<<"InfoFrame Type: Vendor Specific InfoFrame"<<endl;
+            result+="InfoFrame Type: Vendor Specific InfoFrame\n";
              long IFVersion = HB1;
              long IFLenght = HB2&0x1F;
+             QString IFVersio = QString::number(IFVersion);
+             QString IFLeng = QString::number(IFLenght);
              if (IFVersion == 0x01){
-                  long IEEE= PB1 | (PB2<<8) | (PB3<<16);
+                  long IEEE= PB1 | (PB2+8) | (PB3+16);
                   long VA = (PB4&0xF0)>>4;
                   long VB = (PB4&0xF);
                   long VC = (PB5&0xF0)>>4;
@@ -550,180 +631,210 @@ void parser_packet::parse(){
                   long MAXTMDS = (PB7);
                   long LFP = (PB8&0x80)>>7;
                   long ILFP = (PB8&0x40)>>6;
-                  cout<<"InfoFrame_version: "<<IFVersion<<endl;
-                  cout<<"InfoFrame_length: "<<IFLenght<<endl;
-                  cout<<"IEEE Registration Identifier: "<<IEEE<<endl;
-                  cout<<"A: "<<VA<<endl;
-                  cout<<"B: "<<VB<<endl;
-                  cout<<"C: "<<VC<<endl;
-                  cout<<"D: "<<VD<<endl;
-                  cout<<"Supports_AI: "<<SupAI<<endl;
-                  cout<<"DC_30bit: "<<DC30bit<<endl;
-                  cout<<"DC_36bit: "<<DC36bit<<endl;
-                  cout<<"DC_48bit: "<<DC48bit<<endl;
-                  cout<<"DC_Y444: "<<DCY444<<endl;
-                  cout<<"DVI_Dual: "<<DVIDUAL<<endl;
-                  cout<<"Max_TMDS_Clock: "<<MAXTMDS<<endl;
-                  cout<<"Latency_Fields_Present: "<<LFP<<endl;
-                  cout<<"I_Latency_Fields_Present: "<<ILFP<<endl;
+                  QString IEE = QString::number(IEEE);
+                  QString va = QString::number(VA);
+                  QString vb = QString::number(VB);
+                  QString vc = QString::number(VC);
+                  QString vd = QString::number(VD);
+                  QString SupA = QString::number(SupAI);
+                  QString DC48bi = QString::number(DC48bit);
+                  QString DC36bi = QString::number(DC36bit);
+                  QString DC30bi = QString::number(DC30bit);
+                  QString DCy444 = QString::number(DCY444);
+                  QString DVIDU = QString::number(DVIDUAL);
+                  QString MAXTMD = QString::number(MAXTMDS);
+                  QString LFP1 = QString::number(LFP);
+                  QString ILFP2 = QString::number(ILFP);
+
+
+                  result+="InfoFrame_version: "+IFVersio+" \n";
+                  result+="InfoFrame_length: "+IFLeng+" \n";
+                  result+="IEEE Registration Identifier: "+IEE+" \n";
+                  result+="A: "+va+" \n";
+                  result+="B: "+vb+" \n";
+                  result+="C: "+vc+" \n";
+                  result+="D: "+vd+" \n";
+                  result+="Supports_AI: "+SupA+" \n";
+                  result+="DC_30bit: "+DC30bi+" \n";
+                  result+="DC_36bit: "+DC36bi+" \n";
+                  result+="DC_48bit: "+DC48bi+" \n";
+                  result+="DC_Y444: "+DCy444+" \n";
+                  result+="DVI_Dual: "+DVIDU+" \n";
+                  result+="Max_TMDS_Clock: "+MAXTMD+" \n";
+                  result+="Latency_Fields_Present: "+LFP1+" \n";
+                  result+="I_Latency_Fields_Present: "+ILFP2+" \n";
                  }
              if (IFLenght>=9){
                 long VideoLatency = PB9;
-                cout<<"Video_Latency: "<<VideoLatency<<endl;
+                QString VideoLatenc = QString::number(VideoLatency);
+                result+="Video_Latency: "+VideoLatenc+" \n";
                 if (IFLenght>=10){
                     long AudioLatency = PB10;
-                    cout<<"Audio_Latency: "<<AudioLatency<<endl;
+                    QString AudioLatenc = QString::number(AudioLatency);
+                    result+="Audio_Latency: "+AudioLatenc+" \n";
                     if (IFLenght>=11){
                         long InterlacedVideoLatency = PB11;
-                        cout<<"Interlaced_Video_Latency: "<<InterlacedVideoLatency<<endl;
+                        QString InterlacedVideoLatenc = QString::number(InterlacedVideoLatency);
+                        result+="Interlaced_Video_Latency: "+InterlacedVideoLatenc+" \n";
                         if (IFLenght>=12){
                             long InterlacedAudioLatency = PB12;
-                            cout<<"Interlaced_Audio_Latency: "<<InterlacedAudioLatency<<endl;
+                            QString InterlacedAudioLatenc = QString::number(InterlacedAudioLatency);
+                            result+="Interlaced_Audio_Latency: "+InterlacedAudioLatenc+" \n";
                     }
                 }
              }
              }
             break;}
         case 0x02:{
-            cout<<"InfoFrame Type: AVI InfoFrame"<<endl;
+            result+="InfoFrame Type: AVI InfoFrame\n";
             long IFVersion = HB1;
             if (IFVersion == 0x01){
                  long IFLenght = HB2&0x1F;
-                 cout<<"Version: "<<IFVersion<<endl;
-                 cout<<"Length: "<<IFLenght<<endl;
+                 QString IFVersio = QString::number(IFVersion);
+                 QString IFLengt = QString::number(IFLenght);
+                 result+="Version: "+IFVersio+" \n";
+                 result+="Length: "+IFLengt+" \n";
                  long Y = (PB1&0x60)>>5;
+                 QString y = QString::number(Y);
                  switch (Y) {
                  case 0x00:{
-                     cout<<"Y: "<< Y <<" : RGB (default)"<<endl;
+                     result+="Y: "+ y +" : RGB (default)"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"Y: "<< Y <<" : YCBCR 4:2:2"<<endl;
+                     result+="Y: "+ y +" : YCBCR 4:2:2"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"Y: "<< Y <<" : YCBCR 4:4:4"<<endl;
+                     result+="Y: "+ y +" : YCBCR 4:4:4"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"Y: "<< Y <<" : *future*"<<endl;
+                     result+="Y: "+ y +" : *future*"+" \n";
                      break;}
                  default:{
 
                      break;}
                  }
                  long A = (PB1&0x10)>>4;
+                 QString a = QString::number(A);
                  switch (A) {
                  case 0x00:{
-                     cout<<"A: "<< A <<" : No Active Format Information"<<endl;
+                     result+="A: "+ a +" : No Active Format Information"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"A: "<< A <<" : Active Format (R3...R0) Information present"<<endl;
+                     result+="A: "+ a +" : Active Format (R3...R0) Information present"+" \n";
                      break;}
                  default:{
 
                      break;}
                  }
                  long B = (PB1&0x0C)>>2;
+                 QString b = QString::number(B);
                  switch (B) {
                  case 0x00:{
-                     cout<<"B: "<< B <<" : Bar Data not present"<<endl;
+                     result+="B: "+ b +" : Bar Data not present"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"B: "<< B <<" : Vert. Bar Info present"<<endl;
+                     result+="B: "+ b +" : Vert. Bar Info present"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"B: "<< B <<" : Horiz. Bar Info present"<<endl;
+                     result+="B: "+ b +" : Horiz. Bar Info present"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"B: "<< B <<" : Vert. and Horiz. Bar Info present"<<endl;
+                     result+="B: "+ b +" : Vert. and Horiz. Bar Info present"+" \n";
                      break;}
                  default:{
 
                      break;}
                  }
                  long S = (PB1&0x03);
+                 QString s = QString::number(S);
                  switch (S) {
                  case 0x00:{
-                     cout<<"S: "<< S <<" : No Data"<<endl;
+                     result+="S: "+ s +" : No Data"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"S: "<< S <<" : Composed for an overscanned display, where some active pixels and lines at the edges are not displayed."<<endl;
+                     result+="S: "+ s +" : Composed for an overscanned display, where some active pixels and lines at the edges are not displayed."+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"S: "<< S <<" : Composed for an underscanned display, where all active pixels & lines are displayed, with or without a border."<<endl;
+                     result+="S: "+ s +" : Composed for an underscanned display, where all active pixels & lines are displayed, with or without a border."+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"S: "<< S <<" : *future*"<<endl;
+                     result+="S: "+ s +" : *future*"+" \n";
                      break;}
                  default:{
 
                      break;}
                  }
                  long C = (PB2&0xC0)>>6;
+                 QString c = QString::number(C);
                  switch (C) {
                  case 0x00:{
-                     cout<<"C: "<< C <<" : No Data"<<endl;
+                     result+="C: "+ c +" : No Data"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"C: "<< C <<" : SMPTE 170M [1]"<<endl;
+                     result+="C: "+ c +" : SMPTE 170M [1]"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"C: "<< C <<" : ITU-R 709 [7]"<<endl;
+                     result+="C: "+ c +" : ITU-R 709 [7]"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"C: "<< C <<" : Extended Colorimetry Information Valid"<<endl;
+                     result+="C: "+ c +" : Extended Colorimetry Information Valid"+" \n";
                      break;}
                  default:{
 
                      break;}
                  }
                  long M = (PB2&0x30)>>4;
+                 QString m = QString::number(M);
                  switch (M) {
                  case 0x00:{
-                     cout<<"M: "<< M <<" : No Data"<<endl;
+                     result+="M: "+ m +" : No Data"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"M: "<< M <<" : 4:3"<<endl;
+                     result+="M: "+ m +" : 4:3"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"M: "<< M <<" : 16:9"<<endl;
+                     result+="M: "+ m +" : 16:9"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"M: "<< M <<" : *future*"<<endl;
+                     result+="M: "+ m +" : *future*"+" \n";
                      break;}
                  default:{
 
                      break;}
                  }
                  long R = (PB2&0x0F);
+                 QString r = QString::number(R);
                  switch (R) {
                  case 0x08:{
-                     cout<<"R: "<< R <<" : Same as coded frame aspect ratio"<<endl;
+                     result+="R: "+ r +" : Same as coded frame aspect ratio"+" \n";
                      break;}
                  case 0x09:{
-                     cout<<"R: "<< R <<" : 4:3 (center)"<<endl;
+                     result+="R: "+ r +" : 4:3 (center)"+" \n";
                      break;}
                  case 0x0A:{
-                     cout<<"R: "<< R <<" : 16:9 (center)"<<endl;
+                     result+="R: "+ r +" : 16:9 (center)"+" \n";
                      break;}
                  case 0x0B:{
-                     cout<<"R: "<< R <<" : 14:9 (center)"<<endl;
+                     result+="R: "+ r +" : 14:9 (center)"+" \n";
                      break;}
                  default:{
-                     cout<<"R: "<< R <<" : Varies. See Annex H."<<endl;
+                     result+="R: "+ r +" : Varies. See Annex H."+" \n";
                      break;}
                  }
                  long SC = (PB3&0x03);
+                 QString sc = QString::number(SC);
                  switch (SC) {
                  case 0x00:{
-                     cout<<"Non-Uniform Picture Scaling: "<< SC <<" : No Know non-uniform Scaling"<<endl;
+                     result+="Non-Uniform Picture Scaling: "+ sc +" : No Know non-uniform Scaling"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"Non-Uniform Picture Scaling: "<< SC <<" : Picture has been scaled horizontally"<<endl;
+                     result+="Non-Uniform Picture Scaling: "+ sc +" : Picture has been scaled horizontally"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"Non-Uniform Picture Scaling: "<< SC <<" : Picture has been scaled vertically"<<endl;
+                     result+="Non-Uniform Picture Scaling: "+ sc +" : Picture has been scaled vertically"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"Non-Uniform Picture Scaling: "<< SC <<" : Picture has been scaled horizontally and vertically"<<endl;
+                     result+="Non-Uniform Picture Scaling: "+ sc +" : Picture has been scaled horizontally and vertically"+" \n";
                      break;}
                  default:{
 
@@ -732,676 +843,707 @@ void parser_packet::parse(){
                  long SBB = (PB7&0xFF) | (PB8&0xFF00);
                  long ELB = (PB9&0xFF) | (PB10&0xFF00);
                  long SRB = (PB11&0xFF) | (PB12&0xFF00);
-                 cout<<"ETB: "<<ETB<<endl;
-                 cout<<"SBB: "<<SBB<<endl;
-                 cout<<"ELB: "<<ELB<<endl;
-                 cout<<"SRB: "<<SRB<<endl;
+                 QString etb = QString::number(ETB);
+                 QString sbb = QString::number(SBB);
+                 QString elb = QString::number(ELB);
+                 QString srb = QString::number(SRB);
+                 result+="ETB: "+etb+" \n";
+                 result+="SBB: "+sbb+" \n";
+                 result+="ELB: "+elb+" \n";
+                 result+="SRB: "+srb+" \n";
             }
             if (IFVersion == 0x02){
                  long IFLenght = HB2&0x1F;
-                 cout<<"Version: "<<IFVersion<<endl;
-                 cout<<"Length: "<<IFLenght<<endl;
+                 QString IFVersio = QString::number(IFVersion);
+                 QString IFLengh = QString::number(IFLenght);
+                 result+="Version: "+IFVersio+" \n";
+                 result+="Length: "+IFLengh+" \n";
+
                  long Y = (PB1&0x60)>>5;
+                 QString y = QString::number(Y);
                  switch (Y) {
                  case 0x00:{
-                     cout<<"Y: "<< Y <<" : RGB (default)"<<endl;
+                     result+="Y: "+ y +" : RGB (default)"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"Y: "<< Y <<" : YCBCR 4:2:2"<<endl;
+                     result+="Y: "+ y +" : YCBCR 4:2:2"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"Y: "<< Y <<" : YCBCR 4:4:4"<<endl;
+                     result+="Y: "+ y +" : YCBCR 4:4:4"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"Y: "<< Y <<" : *future*"<<endl;
+                     result+="Y: "+ y +" : *future*"+" \n";
                      break;}
                  default:{
 
                      break;}
                  }
                  long A = (PB1&0x10)>>4;
+                 QString a = QString::number(A);
                  switch (A) {
                  case 0x00:{
-                     cout<<"A: "<< A <<" : No Active Format Information"<<endl;
+                     result+="A: "+ a +" : No Active Format Information"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"A: "<< A <<" : Active Format (R3...R0) Information present"<<endl;
+                     result+="A: "+ a +" : Active Format (R3...R0) Information present"+" \n";
                      break;}
                  default:{
 
                      break;}
                  }
                  long B = (PB1&0x0C)>>2;
+                 QString b = QString::number(B);
                  switch (B) {
                  case 0x00:{
-                     cout<<"B: "<< B <<" : Bar Data not present"<<endl;
+                     result+="B: "+ b +" : Bar Data not present"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"B: "<< B <<" : Vert. Bar Info present"<<endl;
+                     result+="B: "+ b +" : Vert. Bar Info present"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"B: "<< B <<" : Horiz. Bar Info present"<<endl;
+                     result+="B: "+ b +" : Horiz. Bar Info present"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"B: "<< B <<" : Vert. and Horiz. Bar Info present"<<endl;
+                     result+="B: "+ b +" : Vert. and Horiz. Bar Info present"+" \n";
                      break;}
                  default:{
 
                      break;}
                  }
                  long S = (PB1&0x03);
+                 QString s = QString::number(S);
                  switch (S) {
                  case 0x00:{
-                     cout<<"S: "<< S <<" : No Data"<<endl;
+                     result+="S: "+ s +" : No Data"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"S: "<< S <<" : Composed for an overscanned display, where some active pixels and lines at the edges are not displayed."<<endl;
+                     result+="S: "+ s +" : Composed for an overscanned display, where some active pixels and lines at the edges are not displayed."+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"S: "<< S <<" : Composed for an underscanned display, where all active pixels & lines are displayed, with or without a border."<<endl;
+                     result+="S: "+ s +" : Composed for an underscanned display, where all active pixels & lines are displayed, with or without a border."+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"S: "<< S <<" : *future*"<<endl;
+                     result+="S: "+ s +" : *future*"+" \n";
                      break;}
                  default:{
 
                      break;}
                  }
                  long C = (PB2&0xC0)>>6;
+                 QString c = QString::number(C);
                  switch (C) {
                  case 0x00:{
-                     cout<<"C: "<< C <<" : No Data"<<endl;
+                     result+="C: "+ c +" : No Data"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"C: "<< C <<" : SMPTE 170M [1]"<<endl;
+                     result+="C: "+ c +" : SMPTE 170M [1]"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"C: "<< C <<" : ITU-R 709 [7]"<<endl;
+                     result+="C: "+ c +" : ITU-R 709 [7]"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"C: "<< C <<" : Extended Colorimetry Information Valid"<<endl;
+                     result+="C: "+ c +" : Extended Colorimetry Information Valid"+" \n";
                      break;}
                  default:{
 
                      break;}
                  }
                  long M = (PB2&0x30)>>4;
+                 QString m = QString::number(M);
                  switch (M) {
                  case 0x00:{
-                     cout<<"M: "<< M <<" : No Data"<<endl;
+                     result+="M: "+ m +" : No Data"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"M: "<< M <<" : 4:3"<<endl;
+                     result+="M: "+ m +" : 4:3"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"M: "<< M <<" : 16:9"<<endl;
+                     result+="M: "+ m +" : 16:9"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"M: "<< M <<" : *future*"<<endl;
+                     result+="M: "+ m +" : *future*"+" \n";
                      break;}
                  default:{
 
                      break;}
                  }
                  long R = (PB2&0x0F);
+                 QString r = QString::number(R);
                  switch (R) {
                  case 0x08:{
-                     cout<<"R: "<< R <<" : Same as coded frame aspect ratio"<<endl;
+                     result+="R: "+ r +" : Same as coded frame aspect ratio"+" \n";
                      break;}
                  case 0x09:{
-                     cout<<"R: "<< R <<" : 4:3 (center)"<<endl;
+                     result+="R: "+ r +" : 4:3 (center)"+" \n";
                      break;}
                  case 0x0A:{
-                     cout<<"R: "<< R <<" : 16:9 (center)"<<endl;
+                     result+="R: "+ r +" : 16:9 (center)"+" \n";
                      break;}
                  case 0x0B:{
-                     cout<<"R: "<< R <<" : 14:9 (center)"<<endl;
+                     result+="R: "+ r +" : 14:9 (center)"+" \n";
                      break;}
                  default:{
-                     cout<<"R: "<< R <<" : Varies. See Annex H."<<endl;
+                     result+="R: "+ r +" : Varies. See Annex H."+" \n";
                      break;}
                  }
                  long ITC = (PB3&0x80)>>7;
+                 QString itc = QString::number(ITC);
                  switch (ITC) {
                  case 0x00:{
-                     cout<<"IT content: "<< ITC <<" : No Data"<<endl;
+                     result+="IT content: "+ itc +" : No Data"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"IT content: "<< ITC <<" : IT content (Byte 5 CN bits valid)"<<endl;
+                     result+="IT content: "+ itc +" : IT content (Byte 5 CN bits valid)"+" \n";
                      break;}
                  default:{
 
                      break;}
                  }
                  long EC = (PB3&0x70)>>4;
+                 QString ec  = QString::number(EC);
                  switch (EC) {
                  case 0x00:{
-                     cout<<"Extended Colorimetry: "<< EC <<" : xvYCC601"<<endl;
+                     result+="Extended Colorimetry: "+ ec +" : xvYCC601"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"Extended Colorimetry: "<< EC <<" : xvYCC709"<<endl;
+                     result+="Extended Colorimetry: "+ ec +" : xvYCC709"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"Extended Colorimetry: "<< EC <<" : sYCC601"<<endl;
+                     result+="Extended Colorimetry: "+ ec +" : sYCC601"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"Extended Colorimetry: "<< EC <<" : AdobeYCC601"<<endl;
+                     result+="Extended Colorimetry: "+ ec +" : AdobeYCC601"+" \n";
                      break;}
                  case 0x04:{
-                     cout<<"Extended Colorimetry: "<< EC <<" : AdobeRGB"<<endl;
+                     result+="Extended Colorimetry: "+ ec +" : AdobeRGB"+" \n";
                      break;}
                  default:{
-                     cout<<"EC: "<< EC <<endl;
+                     result+="EC: "+ ec +" \n";
                      break;}
                  }
                  long Q = (PB3&0x0C)>>2;
+                 QString q  = QString::number(Q);
                  switch (Q) {
                  case 0x00:{
-                     cout<<"RGB Quanitization Range: "<< Q <<" : Default (depends on video format)"<<endl;
+                     result+="RGB Quanitization Range: "+ q +" : Default (depends on video format)"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"RGB Quanitization Range: "<< Q <<" : Limit Range"<<endl;
+                     result+="RGB Quanitization Range: "+ q +" : Limit Range"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"RGB Quanitization Range: "<< Q <<" : Full Range"<<endl;
+                     result+="RGB Quanitization Range: "+ q +" : Full Range"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"RGB Quanitization Range: "<< Q <<" : Reserved"<<endl;
+                     result+="RGB Quanitization Range: "+ q +" : Reserved"+" \n";
                      break;}
                  default:{
 
                      break;}}
                  long SC = (PB3&0x03);
+                 QString sc = QString::number(SC);
                  switch (SC) {
                  case 0x00:{
-                     cout<<"Non-Uniform Picture Scaling: "<< SC <<" : No Know non-uniform Scaling"<<endl;
+                     result+="Non-Uniform Picture Scaling: "+ sc +" : No Know non-uniform Scaling"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"Non-Uniform Picture Scaling: "<< SC <<" : Picture has been scaled horizontally"<<endl;
+                     result+="Non-Uniform Picture Scaling: "+ sc +" : Picture has been scaled horizontally"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"Non-Uniform Picture Scaling: "<< SC <<" : Picture has been scaled vertically"<<endl;
+                     result+="Non-Uniform Picture Scaling: "+ sc +" : Picture has been scaled vertically"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"Non-Uniform Picture Scaling: "<< SC <<" : Picture has been scaled horizontally and vertically"<<endl;
+                     result+="Non-Uniform Picture Scaling: "+ sc +" : Picture has been scaled horizontally and vertically"+" \n";
                      break;}
                  default:{
 
                      break;}}
                  long VIC = (PB4&0x7F);
+                 QString vic = QString::number(VIC);
                  switch (VIC) {
                  case 1:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"640x480p @ 59.94/60Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 640x480p @ 59.94/60Hz \n";
+                     result+="Valid Pixel Repeat Values: No Repetition \n";
+                     result+="AVI w/PR Required: No \n";
                      break;}
                  case 2:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720x480p @ 59.94/60Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720x480p @ 59.94/60Hz \n";
+                     result+="Valid Pixel Repeat Values: No Repetition \n";
+                     result+="AVI w/PR Required: No \n";
                      break;}
                  case 3:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720x480p @ 59.94/60Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720x480p @ 59.94/60Hz \n";
+                     result+="Valid Pixel Repeat Values: No Repetition \n";
+                     result+="AVI w/PR Required: No \n";
                      break;}
                  case 4:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1280x720p @ 59.94/60Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1280x720p @ 59.94/60Hz \n";
+                     result+="Valid Pixel Repeat Values: No Repetition \n";
+                     result+="AVI w/PR Required: No \n";
                      break;}
                  case 5:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1920x1080i @ 59.94/60Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1920x1080i @ 59.94/60Hz \n";
+                     result+="Valid Pixel Repeat Values: No Repetition \n";
+                     result+="AVI w/PR Required: No \n";
                      break;}
                  case 6:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720(1440)x480i @ 59.94/60Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720(1440)x480i @ 59.94/60Hz \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 2 times \n";
+                     result+="AVI w/PR Required: No \n";
                      break;}
                  case 7:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720(1440)x480i @ 59.94/60Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720(1440)x480i @ 59.94/60Hz \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 2 times \n";
+                     result+="AVI w/PR Required: No \n";
                      break;}
                  case 8:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720(1440)x240p @ 59.94/60Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720(1440)x240p @ 59.94/60Hz \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 2 times \n";
+                     result+="AVI w/PR Required: No \n";
                      break;}
                  case 9:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720(1440)x240p @ 59.94/60Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720(1440)x240p @ 59.94/60Hz \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 2 times \n";
+                     result+="AVI w/PR Required: No \n";
                      break;}
                  case 10:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"2880x480i @ 59.94/60Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 10 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 2880x480i @ 59.94/60Hz \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 1 to 10 times  \n";
+                     result+="AVI w/PR Required: Yes  \n";
                      break;}
                  case 11:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"2880x480i @ 59.94/60Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 10 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 2880x480i @ 59.94/60Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 1 to 10 times  \n";
+                     result+="AVI w/PR Required: Yes  \n";
                      break;}
                  case 12:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"2880x240p @ 59.94/60Hz"<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 10 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 2880x240p @ 59.94/60Hz \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 1 to 10 times  \n";
+                     result+="AVI w/PR Required: Yes  \n";
                      break;}
                  case 13:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"2880x240p @ 59.94/60Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 10 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 2880x240p @ 59.94/60Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 1 to 10 times  \n";
+                     result+="AVI w/PR Required: Yes  \n";
                      break;}
                  case 14:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1440x480p @ 59.94/60Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1440x480p @ 59.94/60Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 1 to 2 times  \n";
+                     result+="AVI w/PR Required: Yes  \n";
                      break;}
                  case 15:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1440x480p @ 59.94/60Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1440x480p @ 59.94/60Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 1 to 2 times  \n";
+                     result+="AVI w/PR Required: Yes  \n";
                      break;}
                  case 16:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1920x1080p @ 59.94/60Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1920x1080p @ 59.94/60Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 17:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720x576p @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720x576p @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 18:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720x576p @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720x576p @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 19:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1280x720p @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1280x720p @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 20:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1920x1080i @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1920x1080i @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 21:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720(1440)x576i @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720(1440)x576i @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 2 times  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 22:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720(1440)x576i @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720(1440)x576i @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 2 times  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 23:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720(1440)x288p @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720(1440)x288p @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 2 times  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 24:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720(1440)x288p @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720(1440)x288p @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 2 times  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 25:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"2880x576i @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 10 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 2880x576i @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 1 to 10 times  \n";
+                     result+="AVI w/PR Required: Yes  \n";
                      break;}
                  case 26:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"2880x576i @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 10 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 2880x576i @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 1 to 10 times  \n";
+                     result+="AVI w/PR Required: Yes  \n";
                      break;}
                  case 27:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"2880x288p @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 10 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 2880x288p @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 1 to 10 times  \n";
+                     result+="AVI w/PR Required: Yes  \n";
                      break;}
                  case 28:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"2880x288p @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 to 10 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 2880x288p @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 1 to 10 times  \n";
+                     result+="AVI w/PR Required: Yes  \n";
                      break;}
                  case 29:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1440x576p @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 or 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1440x576p @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 1 or 2 times  \n";
+                     result+="AVI w/PR Required: Yes  \n";
                      break;}
                  case 30:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1440x576p @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1 or 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1440x576p @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 1 or 2 times  \n";
+                     result+="AVI w/PR Required: Yes  \n";
                      break;}
                  case 31:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1920x1080p @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1920x1080p @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 32:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1920x1080p @ 23.98/24Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1920x1080p @ 23.98/24Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 33:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1920x1080p @ 25Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1920x1080p @ 25Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 34:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1920x1080p @ 29.98/30Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1920x1080p @ 29.98/30Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 35:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"2880x480p @ 59.94/60Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1, 2 or 4 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 2880x480p @ 59.94/60Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 1, 2 or 4 times  \n";
+                     result+="AVI w/PR Required: Yes  \n";
                      break;}
                  case 36:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"2880x480p @ 59.94/60Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1, 2 or 4 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 2880x480p @ 59.94/60Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 1, 2 or 4 times  \n";
+                     result+="AVI w/PR Required: Yes  \n";
                      break;}
                  case 37:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"2880x576p @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1, 2 or 4 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 2880x576p @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 1, 2 or 4 times  \n";
+                     result+="AVI w/PR Required: Yes  \n";
                      break;}
                  case 38:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"2880x576p @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 1, 2 or 4 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"Yes "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 2880x576p @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 1, 2 or 4 times  \n";
+                     result+="AVI w/PR Required: Yes  \n";
                      break;}
                  case 39:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1920x1080i (1250) @ 50Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1920x1080i (1250) @ 50Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 40:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1920x1080i @ 100Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1920x1080i @ 100Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 41:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1280x720p @ 100Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1280x720p @ 100Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 42:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720x576p @ 100Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720x576p @ 100Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 43:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720x576p @ 100Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720x576p @ 100Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 44:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720(1440)x576i @ 100Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720(1440)x576i @ 100Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 2 times  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 45:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720(1440)x576i @ 100Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720(1440)x576i @ 100Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 2 times  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 46:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1920x1080i @ 119.88/120Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1920x1080i @ 119.88/120Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 47:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1280x720p @ 119.88/120Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1280x720p @ 119.88/120Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 48:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720x480p @ 119.88/120Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720x480p @ 119.88/120Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 49:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720x480p @ 119.88/120Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720x480p @ 119.88/120Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 50:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720(1440)x480i @ 119.88/120Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720(1440)x480i @ 119.88/120Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 2 times  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 51:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720(1440)x480i @ 119.88/120Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720(1440)x480i @ 119.88/120Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 2 times  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 52:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720x576p @ 200Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720x576p @ 200Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 53:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720x576p @ 200Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720x576p @ 200Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 54:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720(1440)x576i @ 200Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720(1440)x576i @ 200Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 2 times  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 55:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720(1440)x576i @ 200Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720(1440)x576i @ 200Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 2 times  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 56:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720x480p @ 239.76/240Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720x480p @ 239.76/240Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 57:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720x480p @ 239.76/240Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720x480p @ 239.76/240Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 58:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720(1440)x480i @ 239.76/240Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720(1440)x480i @ 239.76/240Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 2 times  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 59:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"720(1440)x480i @ 239.76/240Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"pixel data sent 2 times "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 720(1440)x480i @ 239.76/240Hz  \n";
+                     result+="Valid Pixel Repeat Values: pixel data sent 2 times  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 60:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1280x720p @ 23.97Hz/24Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1280x720p @ 23.97Hz/24Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 61:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1280x720p @ 25Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1280x720p @ 25Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 62:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1280x720p @ 29.97Hz/30Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1280x720p @ 29.97Hz/30Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 63:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1920x1080p @ 119.88Hz/120Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1920x1080p @ 119.88Hz/120Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  case 64:{
-                     cout<<"VIC: "<< VIC <<endl;
-                     cout<<"Video Description: "<<"1920x1080p @ 100Hz "<<endl;
-                     cout<<"Valid Pixel Repeat Values: "<<"No Repetition "<<endl;
-                     cout<<"AVI w/PR Required: "<<"No "<<endl;
+                     result+="VIC: "+ vic +" \n";
+                     result+="Video Description: 1920x1080p @ 100Hz  \n";
+                     result+="Valid Pixel Repeat Values: No Repetition  \n";
+                     result+="AVI w/PR Required: No  \n";
                      break;}
                  default:{
-                     cout<<"VIC: "<< VIC <<endl;
+                     result+="VIC: "+ vic +" \n";
                      break;}}
                  long YQ = (PB3&0xC0)>>6;
+                 QString yq = QString::number(YQ);
                  switch (YQ) {
                  case 0x00:{
-                     cout<<"YCC Quanitization Range: "<< YQ <<" : Limited Range"<<endl;
+                     result+="YCC Quanitization Range: "+ yq +" : Limited Range"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"YCC Quanitization Range: "<< YQ <<" : Full Range"<<endl;
+                     result+="YCC Quanitization Range: "+ yq +" : Full Range"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"YCC Quanitization Range: "<< YQ <<" : Reserved"<<endl;
+                     result+="YCC Quanitization Range: "+ yq +" : Reserved"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"YCC Quanitization Range: "<< YQ <<" : Reserved"<<endl;
+                     result+="YCC Quanitization Range: "+ yq +" : Reserved"+" \n";
                      break;}
                  default:{
 
                      break;}}
                  long CN = (PB3&0x30)>>4;
+                 QString cn = QString::number(CN);
                  switch (CN) {
                  case 0x00:{
-                     cout<<"IT Content Type: "<< CN <<" : Graphics"<<endl;
+                     result+="IT Content Type: "+ cn +" : Graphics"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"IT Content Type: "<< CN <<" : Photo"<<endl;
+                     result+="IT Content Type: "+ cn +" : Photo"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"IT Content Type: "<< CN <<" : Cinema"<<endl;
+                     result+="IT Content Type: "+ cn +" : Cinema"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"IT Content Type: "<< CN <<" : Game"<<endl;
+                     result+="IT Content Type: "+ cn +" : Game"+" \n";
                      break;}
                  default:{
 
                      break;}}
                  long PR = PB4&0x0F;
+                 QString pr = QString::number(PR);
                  switch (PR) {
                  case 0x00:{
-                     cout<<"Pixel Repetition Factor: "<< PR <<" : No Repetition (i.e., pixel date sent once)"<<endl;
+                     result+="Pixel Repetition Factor: "+ pr +" : No Repetition (i.e., pixel date sent once)"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 2 times (i.e., repeated once)"<<endl;
+                     result+="Pixel Repetition Factor: "+ pr +" : Pixel data sent 2 times (i.e., repeated once)"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 3 times"<<endl;
+                     result+="Pixel Repetition Factor: "+ pr +" : Pixel data sent 3 times"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 4 times"<<endl;
+                     result+="Pixel Repetition Factor: "+ pr +" : Pixel data sent 4 times"+" \n";
                      break;}
                  case 0x04:{
-                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 5 times"<<endl;
+                     result+="Pixel Repetition Factor: "+ pr +" : Pixel data sent 5 times"+" \n";
                      break;}
                  case 0x05:{
-                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 6 times"<<endl;
+                     result+="Pixel Repetition Factor: "+ pr +" : Pixel data sent 6 times"+" \n";
                      break;}
                  case 0x06:{
-                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 7 times"<<endl;
+                     result+="Pixel Repetition Factor: "+ pr +" : Pixel data sent 7 times"+" \n";
                      break;}
                  case 0x07:{
-                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 8 times"<<endl;
+                     result+="Pixel Repetition Factor: "+ pr +" : Pixel data sent 8 times"+" \n";
                      break;}
                  case 0x08:{
-                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 9 times"<<endl;
+                     result+="Pixel Repetition Factor: "+ pr +" : Pixel data sent 9 times"+" \n";
                      break;}
                  case 0x09:{
-                     cout<<"Pixel Repetition Factor: "<< PR <<" : Pixel data sent 10 times"<<endl;
+                     result+="Pixel Repetition Factor: "+ pr +" : Pixel data sent 10 times"+" \n";
                      break;}
                  default:{
-                     cout<<"Pixel Repetition Factor: "<< PR <<" : Reserved"<<endl;
+                     result+="Pixel Repetition Factor: "+ pr +" : Reserved"+" \n";
                      break;}
                  }
                  long ETB = (PB5&0xFF) | (PB6&0xFF00);
                  long SBB = (PB7&0xFF) | (PB8&0xFF00);
                  long ELB = (PB9&0xFF) | (PB10&0xFF00);
                  long SRB = (PB11&0xFF) | (PB12&0xFF00);
-                 cout<<"ETB: "<<ETB<<endl;
-                 cout<<"SBB: "<<SBB<<endl;
-                 cout<<"ELB: "<<ELB<<endl;
-                 cout<<"SRB: "<<SRB<<endl;
+                 QString etb = QString::number(ETB);
+                 QString sbb = QString::number(SBB);
+                 QString elb = QString::number(ELB);\
+                 QString srb = QString::number(SRB);
+                 result+="ETB: "+etb+" \n";
+                 result+="SBB: "+sbb+" \n";
+                 result+="ELB: "+elb+" \n";
+                 result+="SRB: "+srb+" \n";
 
             }
             break;}
         case 0x03:{
-            cout<<"InfoFrame Type: Source Product Descriptor InfoFrame"<<endl;
+            result+="InfoFrame Type: Source Product Descriptor InfoFrame \n";
             long IFVersion = HB1;
             long IFLenght = HB2&0x1F;
             if ((IFVersion == 0x01) && (IFLenght == 25)){
+                QString IFVersio = QString::number(IFVersion);
+                QString IFLengh = QString::number(IFLenght);
+                result+="Version: "+IFVersio+" \n";
+                result+="Length: "+IFLengh+" \n";
                  long VN1 = PB1&0xEF;
                  long VN2 = PB2&0xEF;
                  long VN3 = PB3&0xEF;
@@ -1426,467 +1568,499 @@ void parser_packet::parse(){
                  long PD14 = PB22&0xEF;
                  long PD15 = PB23&0xEF;
                  long PD16 = PB24&0xEF;
-
-                 cout<<"Version: "<<IFVersion<<endl;
-                 cout<<"Length: "<<IFLenght<<endl;
-                 cout<<"VN1: "<<VN1<<endl;
-                 cout<<"VN2: "<<VN2<<endl;
-                 cout<<"VN3: "<<VN3<<endl;
-                 cout<<"VN4: "<<VN4<<endl;
-                 cout<<"VN5: "<<VN5<<endl;
-                 cout<<"VN6: "<<VN6<<endl;
-                 cout<<"VN7: "<<VN7<<endl;
-                 cout<<"VN8: "<<VN8<<endl;
-                 cout<<"PD1: "<<PD1<<endl;
-                 cout<<"PD2: "<<PD2<<endl;
-                 cout<<"PD3: "<<PD3<<endl;
-                 cout<<"PD4: "<<PD4<<endl;
-                 cout<<"PD5: "<<PD5<<endl;
-                 cout<<"PD6: "<<PD6<<endl;
-                 cout<<"PD7: "<<PD7<<endl;
-                 cout<<"PD8: "<<PD8<<endl;
-                 cout<<"PD9: "<<PD9<<endl;
-                 cout<<"PD10: "<<PD10<<endl;
-                 cout<<"PD11: "<<PD11<<endl;
-                 cout<<"PD12: "<<PD12<<endl;
-                 cout<<"PD13: "<<PD13<<endl;
-                 cout<<"PD14: "<<PD14<<endl;
-                 cout<<"PD15: "<<PD15<<endl;
-                 cout<<"PD16: "<<PD16<<endl;
+                 QString vn1 = QString::number(VN1);
+                 QString vn2 = QString::number(VN2);
+                 QString vn3 = QString::number(VN3);
+                 QString vn4 = QString::number(VN4);
+                 QString vn5 = QString::number(VN5);
+                 QString vn6 = QString::number(VN6);
+                 QString vn7 = QString::number(VN7);
+                 QString vn8 = QString::number(VN8);
+                 QString pd1 = QString::number(PD1);
+                 QString pd2 = QString::number(PD2);
+                 QString pd3 = QString::number(PD3);
+                 QString pd4 = QString::number(PD4);
+                 QString pd5 = QString::number(PD5);
+                 QString pd6 = QString::number(PD6);
+                 QString pd7 = QString::number(PD7);
+                 QString pd8 = QString::number(PD8);
+                 QString pd9 = QString::number(PD9);
+                 QString pd10 = QString::number(PD10);
+                 QString pd11 = QString::number(PD11);
+                 QString pd12 = QString::number(PD12);
+                 QString pd13 = QString::number(PD13);
+                 QString pd14 = QString::number(PD14);
+                 QString pd15 = QString::number(PD15);
+                 QString pd16 = QString::number(PD16);
+                 result+="VN1: "+vn1+" \n";
+                 result+="VN2: "+vn2+" \n";
+                 result+="VN3: "+vn3+" \n";
+                 result+="VN4: "+vn4+" \n";
+                 result+="VN5: "+vn5+" \n";
+                 result+="VN6: "+vn6+" \n";
+                 result+="VN7: "+vn7+" \n";
+                 result+="VN8: "+vn8+" \n";
+                 result+="PD1: "+pd1+" \n";
+                 result+="PD2: "+pd2+" \n";
+                 result+="PD3: "+pd3+" \n";
+                 result+="PD4: "+pd4+" \n";
+                 result+="PD5: "+pd5+" \n";
+                 result+="PD6: "+pd6+" \n";
+                 result+="PD7: "+pd7+" \n";
+                 result+="PD8: "+pd8+" \n";
+                 result+="PD9: "+pd9+" \n";
+                 result+="PD10: "+pd10+" \n";
+                 result+="PD11: "+pd11+" \n";
+                 result+="PD12: "+pd12+" \n";
+                 result+="PD13: "+pd13+" \n";
+                 result+="PD14: "+pd14+" \n";
+                 result+="PD15: "+pd15+" \n";
+                 result+="PD16: "+pd16+" \n";
                  long SourceINFO = PB25;
+                 QString si = QString::number(SourceINFO);
                  switch (SourceINFO) {
                  case 0x00:
-                     cout<<"Source Information: unknown ( "<<SourceINFO<<" )"<<endl;
+                     result+="Source Information: unknown ( "+si+" )"+" \n";
                      break;
                  case 0x01:
-                     cout<<"Source Information: Digital STB ( "<<SourceINFO<<" )"<<endl;
+                     result+="Source Information: Digital STB ( "+si+" )"+" \n";
                      break;
                  case 0x02:
-                     cout<<"Source Information: DVD player ( "<<SourceINFO<<" )"<<endl;
+                     result+="Source Information: DVD player ( "+si+" )"+" \n";
                      break;
                  case 0x03:
-                     cout<<"Source Information: D-VHS ( "<<SourceINFO<<" )"<<endl;
+                     result+="Source Information: D-VHS ( "+si+" )"+" \n";
                      break;
                  case 0x04:
-                     cout<<"Source Information: HDD Videorecorder ( "<<SourceINFO<<" )"<<endl;
+                     result+="Source Information: HDD Videorecorder ( "+si+" )"+" \n";
                      break;
                  case 0x05:
-                     cout<<"Source Information: DVC ( "<<SourceINFO<<" )"<<endl;
+                     result+="Source Information: DVC ( "+si+" )"+" \n";
                      break;
                  case 0x06:
-                     cout<<"Source Information: DSC ( "<<SourceINFO<<" )"<<endl;
+                     result+="Source Information: DSC ( "+si+" )"+" \n";
                      break;
                  case 0x07:
-                     cout<<"Source Information: Video CD ( "<<SourceINFO<<" )"<<endl;
+                     result+="Source Information: Video CD ( "+si+" )"+" \n";
                      break;
                  case 0x08:
-                     cout<<"Source Information: Game ( "<<SourceINFO<<" )"<<endl;
+                     result+="Source Information: Game ( "+si+" )"+" \n";
                      break;
                  case 0x09:
-                     cout<<"Source Information: PC general ( "<<SourceINFO<<" )"<<endl;
+                     result+="Source Information: PC general ( "+si+" )"+" \n";
                      break;
                  case 0x0A:
-                     cout<<"Source Information: Blu-Ray Disk (BD) ( "<<SourceINFO<<" )"<<endl;
+                     result+="Source Information: Blu-Ray Disk (BD) ( "+si+" )"+" \n";
                      break;
                  case 0x0B:
-                     cout<<"Source Information: Super Audio CD ( "<<SourceINFO<<" )"<<endl;
+                     result+="Source Information: Super Audio CD ( "+si+" )"+" \n";
                      break;
                  case 0x0C:
-                     cout<<"Source Information: HD DVD ( "<<SourceINFO<<" )"<<endl;
+                     result+="Source Information: HD DVD ( "+si+" )"+" \n";
                      break;
                  case 0x0D:
-                     cout<<"Source Information: PMP ( "<<SourceINFO<<" )"<<endl;
+                     result+="Source Information: PMP ( "+si+" )"+" \n";
                      break;
                  default:
-                     cout<<"Source Information: *reserved* ( "<<SourceINFO<<" )"<<endl;
+                     result+="Source Information: *reserved* ( "+si+" )"+" \n";
                      break;
                  }
             }
             break;}
         case 0x04:{
-            cout<<"InfoFrame Type: Audio InfoFrame"<<endl;
+            result+="InfoFrame Type: Audio InfoFrame \n";
             long IFVersion = HB1;
             long IFLenght = HB2&0x1F;
             if ((IFVersion == 1) && (IFLenght == 10)){
-                cout<<"Version: "<<IFVersion<<endl;
-                cout<<"Length: "<<IFLenght<<endl;
+                QString IFVersio = QString::number(IFVersion);
+                QString IFLengh = QString::number(IFLenght);
+                result+="Version: "+IFVersio+" \n";
+                result+="Length: "+IFLengh+" \n";
                  long CT = (PB1&0xF0)>>4;
+                 QString ct = QString::number(CT);
                  switch (CT) {
                  case 0x00:{
-                     cout<<"CT="<< CT <<" >> Refer to Stream Header"<<endl;
+                     result+="CT="+ ct +" >> Refer to Stream Header"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"CT="<< CT <<" >> Audio Coding Type: PCM ; Audio Stream Standard: IEC 60958-3 [13]"<<endl;
+                     result+="CT="+ ct +" >> Audio Coding Type: PCM ; Audio Stream Standard: IEC 60958-3 [13]"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"CT="<< CT <<" >> Audio Coding Type: AC-3 ; Audio Stream Encoding Standard: ATSC A/58B [12] excluding Annex E ; Audio Stream Transport Standart: IEC 61937-3 [15]"<<endl;
+                     result+="CT="+ ct +" >> Audio Coding Type: AC-3 ; Audio Stream Encoding Standard: ATSC A/58B [12] excluding Annex E ; Audio Stream Transport Standart: IEC 61937-3 [15]"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"CT="<< CT <<" >> Audio Coding Type: MPEG-1 ; Audio Stream Encoding Standard: ISO/IEC 11172-3 [22] Layer 1 or Layer 2 ; Audio Stream Transport Standart: IEC 61937-4 [16]"<<endl;
+                     result+="CT="+ ct +" >> Audio Coding Type: MPEG-1 ; Audio Stream Encoding Standard: ISO/IEC 11172-3 [22] Layer 1 or Layer 2 ; Audio Stream Transport Standart: IEC 61937-4 [16]"+" \n";
                      break;}
                  case 0x04:{
-                     cout<<"CT="<< CT <<" >> Audio Coding Type: MP3 ; Audio Stream Encoding Standard: ISO/IEC 11172-3 [22] Layer 3 ; Audio Stream Transport Standart: IEC 61937-4 [16]"<<endl;
+                     result+="CT="+ ct +" >> Audio Coding Type: MP3 ; Audio Stream Encoding Standard: ISO/IEC 11172-3 [22] Layer 3 ; Audio Stream Transport Standart: IEC 61937-4 [16]"+" \n";
                      break;}
                  case 0x05:{
-                     cout<<"CT="<< CT <<" >> Audio Coding Type: MPEG2 ; Audio Stream Encoding Standard: ISO/IEC 13818-3 [23] ; Audio Stream Transport Standart: IEC 61937-4 [16]"<<endl;
+                     result+="CT="+ ct +" >> Audio Coding Type: MPEG2 ; Audio Stream Encoding Standard: ISO/IEC 13818-3 [23] ; Audio Stream Transport Standart: IEC 61937-4 [16]"+" \n";
                      break;}
                  case 0x06:{
-                     cout<<"CT="<< CT <<" >> Audio Coding Type: AAC LC ; Audio Stream Encoding Standard: ISO/IEC 14496-3 [24] ; Audio Stream Transport Standart: IEC 61937-6 [18]"<<endl;
+                     result+="CT="+ ct +" >> Audio Coding Type: AAC LC ; Audio Stream Encoding Standard: ISO/IEC 14496-3 [24] ; Audio Stream Transport Standart: IEC 61937-6 [18]"+" \n";
                      break;}
                  case 0x07:{
-                     cout<<"CT="<< CT <<" >> Audio Coding Type: DTS; Audio Stream Encoding Standard: ETSI TS 102 114 [37] ; Audio Stream Transport Standart: IEC 61937-5 [17]"<<endl;
+                     result+="CT="+ ct +" >> Audio Coding Type: DTS; Audio Stream Encoding Standard: ETSI TS 102 114 [37] ; Audio Stream Transport Standart: IEC 61937-5 [17]"+" \n";
                      break;}
                  case 0x08:{
-                     cout<<"CT="<< CT <<" >> Audio Coding Type: ATRAC ; Audio Stream Encoding Standard: IEC 61909 [14] See also ATRAC [61] ; Audio Stream Transport Standart: IEC 61937-7 [19]"<<endl;
+                     result+="CT="+ ct +" >> Audio Coding Type: ATRAC ; Audio Stream Encoding Standard: IEC 61909 [14] See also ATRAC [61] ; Audio Stream Transport Standart: IEC 61937-7 [19]"+" \n";
                      break;}
                  case 0x09:{
-                     cout<<"CT="<< CT <<" >> Audio Coding Type: DSD ; Audio Stream Standard: ISO/IEC 14496-3 [24], subpart 10, See also Super Audio CD [70]"<<endl;
+                     result+="CT="+ ct +" >> Audio Coding Type: DSD ; Audio Stream Standard: ISO/IEC 14496-3 [24], subpart 10, See also Super Audio CD [70]"+" \n";
                      break;}
                  case 0x0A:{
-                     cout<<"CT="<< CT <<" >> Audio Coding Type: E-AC-3 ; Audio Stream Encoding Standard: ATSC A/52B [12] with Annex E ; Audio Stream Transport Standart: IEC 61937-3 [15]"<<endl;
+                     result+="CT="+ ct +" >> Audio Coding Type: E-AC-3 ; Audio Stream Encoding Standard: ATSC A/52B [12] with Annex E ; Audio Stream Transport Standart: IEC 61937-3 [15]"+" \n";
                      break;}
                  case 0x0B:{
-                     cout<<"CT="<< CT <<" >> Audio Coding Type: DTS-HD ; Audio Stream Encoding Standard: DVD Forum DTS-HD [28] ; Audio Stream Transport Standart: IEC 61937-5 [17]"<<endl;
+                     result+="CT="+ ct +" >> Audio Coding Type: DTS-HD ; Audio Stream Encoding Standard: DVD Forum DTS-HD [28] ; Audio Stream Transport Standart: IEC 61937-5 [17]"+" \n";
                      break;}
                  case 0x0C:{
-                     cout<<"CT="<< CT <<" >> Audio Coding Type: MLP ; Audio Stream Encoding Standard: DVD Forum MLP [27] ; Audio Stream Transport Standart: IEC 61937-9 [21]"<<endl;
+                     result+="CT="+ ct +" >> Audio Coding Type: MLP ; Audio Stream Encoding Standard: DVD Forum MLP [27] ; Audio Stream Transport Standart: IEC 61937-9 [21]"+" \n";
                      break;}
                  case 0x0D:{
-                     cout<<"CT="<< CT <<" >> Audio Coding Type: DST ; Audio Stream Standard:  ISO/IEC 14496-3 [24], subpart 10"<<endl;
+                     result+="CT="+ ct +" >> Audio Coding Type: DST ; Audio Stream Standard:  ISO/IEC 14496-3 [24], subpart 10"+" \n";
                      break;}
                  case 0x0E:{
-                     cout<<"CT="<< CT <<" >> Audio Coding Type: WWA Pro ; Audio Stream Encoding Standard: WWA Pro Decoder Specification [30] ; Audio Stream Transport Standart: IEC 61937-8 [20]"<<endl;
+                     result+="CT="+ ct +" >> Audio Coding Type: WWA Pro ; Audio Stream Encoding Standard: WWA Pro Decoder Specification [30] ; Audio Stream Transport Standart: IEC 61937-8 [20]"+" \n";
                      break;}
                  case 0x0F:{
-                     cout<<"CT="<< CT <<" >> Refer to Audio Codding Extension Type (CXT) field in Data Byte 3"<<endl;
+                     result+="CT="+ ct +" >> Refer to Audio Codding Extension Type (CXT) field in Data Byte 3"+" \n";
                      break;}
                  default:{
 
                      break;}}
                  long CC = PB1&0x07;
+                 QString cc = QString::number(CC);
                  switch (CC) {
                  case 0x00:{
-                     cout<<"CС="<< CC <<" >> Refer to Stream Header"<<endl;
+                     result+="CС="+ cc +" >> Refer to Stream Header"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"CС="<< CC <<" >> Audio Channel Count: 2 channels"<<endl;
+                     result+="CС="+ cc +" >> Audio Channel Count: 2 channels"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"CС="<< CC <<" >> Audio Channel Count: 3 channels"<<endl;
+                     result+="CС="+ cc +" >> Audio Channel Count: 3 channels"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"СС="<< CC <<" >> Audio Channel Count: 4 channels"<<endl;
+                     result+="СС="+ cc +" >> Audio Channel Count: 4 channels"+" \n";
                      break;}
                  case 0x04:{
-                     cout<<"CС="<< CC <<" >> Audio Channel Count: 5 channels"<<endl;
+                     result+="CС="+ cc +" >> Audio Channel Count: 5 channels"+" \n";
                      break;}
                  case 0x05:{
-                     cout<<"CС="<< CC <<" >> Audio Channel Count: 6 channels"<<endl;
+                     result+="CС="+ cc +" >> Audio Channel Count: 6 channels"+" \n";
                      break;}
                  case 0x06:{
-                     cout<<"CС="<< CC <<" >> Audio Channel Count: 7 channels"<<endl;
+                     result+="CС="+ cc +" >> Audio Channel Count: 7 channels"+" \n";
                      break;}
                  case 0x07:{
-                     cout<<"CC="<< CC <<" >> Audio Channel Count: 8 channels"<<endl;
+                     result+="CC="+ cc +" >> Audio Channel Count: 8 channels"+" \n";
                      break;}
                  default:{
                      break;}}
                  long SF = PB2&0x1C;
+                 QString sf = QString::number(SF);
                  switch (SF) {
                  case 0x00:{
-                     cout<<"SF="<< SF <<" >> Refer to Stream Header"<<endl;
+                     result+="SF="+ sf +" >> Refer to Stream Header"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"SF="<< SF <<" >> Samping Frequency: 32 kHz"<<endl;
+                     result+="SF="+ sf +" >> Samping Frequency: 32 kHz"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"SF="<< SF <<" >> Samping Frequency: 44.1 kHz (CD) "<<endl;
+                     result+="SF="+ sf +" >> Samping Frequency: 44.1 kHz (CD) "+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"SF="<< SF <<" >> Samping Frequency: 48 kHz "<<endl;
+                     result+="SF="+ sf +" >> Samping Frequency: 48 kHz "+" \n";
                      break;}
                  case 0x04:{
-                     cout<<"SF="<< SF <<" >> Samping Frequency: 88.2 kHz"<<endl;
+                     result+="SF="+ sf +" >> Samping Frequency: 88.2 kHz"+" \n";
                      break;}
                  case 0x05:{
-                     cout<<"SF="<< SF <<" >> Samping Frequency: 96 kHZ"<<endl;
+                     result+="SF="+ sf +" >> Samping Frequency: 96 kHZ"+" \n";
                      break;}
                  case 0x06:{
-                     cout<<"SF="<< SF <<" >> Samping Frequency: 176.4 kHz"<<endl;
+                     result+="SF="+ sf +" >> Samping Frequency: 176.4 kHz"+" \n";
                      break;}
                  case 0x07:{
-                     cout<<"SF="<< SF <<" >> Samping Frequency: 192 kHz"<<endl;
+                     result+="SF="+ sf +" >> Samping Frequency: 192 kHz"+" \n";
                      break;}
                  default:{
                      break;}}
                  long SS = PB2&0x03;
+                 QString ss = QString::number(SS);
                  switch (SS) {
                  case 0x00:{
-                     cout<<"SS="<< SS <<" >> Refer to Stream Header"<<endl;
+                     result+="SS="+ ss +" >> Refer to Stream Header"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"SS="<< SS <<" >> Sample Size: 16bit"<<endl;
+                     result+="SS="+ ss +" >> Sample Size: 16bit"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"SS="<< SS <<" >> Sample Size: 20bit"<<endl;
+                     result+="SS="+ ss +" >> Sample Size: 20bit"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"SS="<< SS <<" >> Sample Size: 24bit"<<endl;
+                     result+="SS="+ ss +" >> Sample Size: 24bit"+" \n";
                      break;}
                  default:{
                      break;}}
                  long CXT = PB3&0x1F;
+                 QString cxt = QString::number(CXT);
                  switch (CXT) {
                  case 0x00:{
-                     cout<<"CXT="<< CXT <<" >> Refer to Stream Header"<<endl;
+                     result+="CXT="+ cxt +" >> Refer to Stream Header"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"CXT="<< CXT <<"  >> Audio Coding Extension Type: HE-AAC ; Audio Stream Encoding Standard: ISO/IEC 14496-3:2005 [24]; Audio Stream Transport Standart: IEC 61937-6 [18]"<<endl;
+                     result+="CXT="+ cxt +"  >> Audio Coding Extension Type: HE-AAC ; Audio Stream Encoding Standard: ISO/IEC 14496-3:2005 [24]; Audio Stream Transport Standart: IEC 61937-6 [18]"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"CXT="<< CXT <<"  >> Audio Coding Extension Type: HE-AAACv2 ; Audio Stream Encoding Standard: ISO/IEC 14496-3:2005/AMD2:2006 [25] ; Audio Stream Transport Standart: IEC 61937-6 [18]"<<endl;
+                     result+="CXT="+ cxt +"  >> Audio Coding Extension Type: HE-AAACv2 ; Audio Stream Encoding Standard: ISO/IEC 14496-3:2005/AMD2:2006 [25] ; Audio Stream Transport Standart: IEC 61937-6 [18]"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"CXT="<< CXT <<"  >> Audio Coding Extension Type: AC-3 ; Audio Stream Encoding Standard: ISO/IEC 230003-1:2007 [26]"<<endl;
+                     result+="CXT="+ cxt +"  >> Audio Coding Extension Type: AC-3 ; Audio Stream Encoding Standard: ISO/IEC 230003-1:2007 [26]"+" \n";
                      break;}
                  default:{
-                     cout<<"CXT="<< CXT <<" >> *reserved*"<<endl;
+                     result+="CXT="+ cxt +" >> *reserved*"+" \n";
                      break;}}
                  long CA = PB4&0xFF;
-                 cout<<"|......|                   Channels:                   |"<<endl;
-                 cout<<"|  CA  |  8  |  7  |  6  |  5  |  4  |  3  |  2  |  1  |"<<endl;
+                 QString ca = QString::number(CA);
+                 result+="|......|                   Channels:                   |  \n";
+                 result+="|  CA  |  8  |  7  |  6  |  5  |  4  |  3  |  2  |  1  |  \n";
                  switch (CA) {
                  case 0x00:{
-                     cout<<"| 0x00 |  -  |  -  |  -  |  -  |  -  |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x00 |  -  |  -  |  -  |  -  |  -  |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x01:{
-                     cout<<"| 0x01 |  -  |  -  |  -  |  -  |  -  | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x01 |  -  |  -  |  -  |  -  |  -  | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x02:{
-                     cout<<"| 0x02 |  -  |  -  |  -  |  -  |  FC |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x02 |  -  |  -  |  -  |  -  |  FC |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x03:{
-                     cout<<"| 0x03 |  -  |  -  |  -  |  -  |  FC | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x03 |  -  |  -  |  -  |  -  |  FC | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x04:{
-                     cout<<"| 0x04 |  -  |  -  |  -  |  RC |  -  |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x04 |  -  |  -  |  -  |  RC |  -  |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x05:{
-                     cout<<"| 0x05 |  -  |  -  |  -  |  RC |  -  | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x05 |  -  |  -  |  -  |  RC |  -  | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x06:{
-                     cout<<"| 0x06 |  -  |  -  |  -  |  RC |  FC |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x06 |  -  |  -  |  -  |  RC |  FC |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x07:{
-                     cout<<"| 0x07 |  -  |  -  |  -  |  RC |  FC | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x07 |  -  |  -  |  -  |  RC |  FC | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x08:{
-                     cout<<"| 0x08 |  -  |  -  |  RR |  RL |  -  |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x08 |  -  |  -  |  RR |  RL |  -  |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x09:{
-                     cout<<"| 0x09 |  -  |  -  |  RR |  RL |  -  | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x09 |  -  |  -  |  RR |  RL |  -  | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x0A:{
-                     cout<<"| 0x0A |  -  |  -  |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x0A |  -  |  -  |  RR |  RL |  FC |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x0B:{
-                     cout<<"| 0x0B |  -  |  -  |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x0B |  -  |  -  |  RR |  RL |  FC | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x0C:{
-                     cout<<"| 0x0C |  -  |  RC |  RR |  RL |  -  |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x0C |  -  |  RC |  RR |  RL |  -  |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x0D:{
-                     cout<<"| 0x0D |  -  |  RC |  RR |  RL |  -  | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x0D |  -  |  RC |  RR |  RL |  -  | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x0E:{
-                     cout<<"| 0x0E |  -  |  RC |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x0E |  -  |  RC |  RR |  RL |  FC |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x0F:{
-                     cout<<"| 0x0F |  -  |  RC |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x0F |  -  |  RC |  RR |  RL |  FC | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x10:{
-                     cout<<"| 0x10 | RRC | RLC |  RR |  RL |  -  |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x10 | RRC | RLC |  RR |  RL |  -  |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x11:{
-                     cout<<"| 0x11 | RRC | RLC |  RR |  RL |  -  | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x11 | RRC | RLC |  RR |  RL |  -  | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x12:{
-                     cout<<"| 0x12 | RRC | RLC |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x12 | RRC | RLC |  RR |  RL |  FC |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x13:{
-                     cout<<"| 0x13 | RRC | RLC |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x13 | RRC | RLC |  RR |  RL |  FC | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x14:{
-                     cout<<"| 0x14 | FRC | FLC |  -  |  -  |  -  |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x14 | FRC | FLC |  -  |  -  |  -  |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x15:{
-                     cout<<"| 0x15 | FRC | FLC |  -  |  -  |  -  | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x15 | FRC | FLC |  -  |  -  |  -  | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x16:{
-                     cout<<"| 0x16 | FRC | FLC |  -  |  -  |  FC |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x16 | FRC | FLC |  -  |  -  |  FC |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x17:{
-                     cout<<"| 0x17 | FRC | FLC |  -  |  -  |  FC | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x17 | FRC | FLC |  -  |  -  |  FC | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x18:{
-                     cout<<"| 0x18 | FRC | FLC |  -  |  RC |  -  |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x18 | FRC | FLC |  -  |  RC |  -  |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x19:{
-                     cout<<"| 0x19 | FRC | FLC |  -  |  RC |  -  | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x19 | FRC | FLC |  -  |  RC |  -  | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x1A:{
-                     cout<<"| 0x1A | FRC | FLC |  -  |  RC |  FC |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x1A | FRC | FLC |  -  |  RC |  FC |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x1B:{
-                     cout<<"| 0x1B | FRC | FLC |  -  |  RC |  FC | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x1B | FRC | FLC |  -  |  RC |  FC | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x1C:{
-                     cout<<"| 0x1C | FRC | FLC |  RR |  RL |  -  |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x1C | FRC | FLC |  RR |  RL |  -  |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x1D:{
-                     cout<<"| 0x1D | FRC | FLC |  RR |  RL |  -  | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x1D | FRC | FLC |  RR |  RL |  -  | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x1E:{
-                     cout<<"| 0x1E | FRC | FLC |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x1E | FRC | FLC |  RR |  RL |  FC |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x1F:{
-                     cout<<"| 0x1F | FRC | FLC |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x1F | FRC | FLC |  RR |  RL |  FC | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x20:{
-                     cout<<"| 0x20 |  -  | FCH |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x20 |  -  | FCH |  RR |  RL |  FC |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x21:{
-                     cout<<"| 0x21 |  -  | FCH |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x21 |  -  | FCH |  RR |  RL |  FC | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x22:{
-                     cout<<"| 0x22 |  TC |  -  |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x22 |  TC |  -  |  RR |  RL |  FC |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x23:{
-                     cout<<"| 0x23 |  TC |  -  |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x23 |  TC |  -  |  RR |  RL |  FC | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x24:{
-                     cout<<"| 0x24 | FRH | FLH |  RR |  RL |  -  |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x24 | FRH | FLH |  RR |  RL |  -  |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x25:{
-                     cout<<"| 0x25 | FRH | FLH |  RR |  RL |  -  | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x25 | FRH | FLH |  RR |  RL |  -  | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x26:{
-                     cout<<"| 0x26 | FRW | FLW |  RR |  RL |  -  |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x26 | FRW | FLW |  RR |  RL |  -  |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x27:{
-                     cout<<"| 0x27 | FRW | FLW |  RR |  RL |  -  | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x27 | FRW | FLW |  RR |  RL |  -  | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x28:{
-                     cout<<"| 0x28 |  TC |  RC |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x28 |  TC |  RC |  RR |  RL |  FC |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x29:{
-                     cout<<"| 0x29 |  TC |  RC |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x29 |  TC |  RC |  RR |  RL |  FC | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x2A:{
-                     cout<<"| 0x2A | FCH |  RC |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x2A | FCH |  RC |  RR |  RL |  FC |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x2B:{
-                     cout<<"| 0x2B | FCH |  RC |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x2B | FCH |  RC |  RR |  RL |  FC | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x2C:{
-                     cout<<"| 0x2C |  TC | FCH |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x2C |  TC | FCH |  RR |  RL |  FC |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x2D:{
-                     cout<<"| 0x2D |  TC | FCH |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x2D |  TC | FCH |  RR |  RL |  FC | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x2E:{
-                     cout<<"| 0x2E | FRH | FLH |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x2E | FRH | FLH |  RR |  RL |  FC |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x2F:{
-                     cout<<"| 0x2F | FRH | FLH |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x2F | FRH | FLH |  RR |  RL |  FC | LFE |  FR |  FL |  \n";
                      break;}
                  case 0x30:{
-                     cout<<"| 0x30 | FRW | FLW |  RR |  RL |  FC |  -  |  FR |  FL |"<<endl;
+                     result+="| 0x30 | FRW | FLW |  RR |  RL |  FC |  -  |  FR |  FL |  \n";
                      break;}
                  case 0x31:{
-                     cout<<"| 0x31 | FRW | FLW |  RR |  RL |  FC | LFE |  FR |  FL |"<<endl;
+                     result+="| 0x31 | FRW | FLW |  RR |  RL |  FC | LFE |  FR |  FL |  \n";
                      break;}
                  default:{
-                     cout<<"|"<<CA<<"|                  *reserved*                   |"<<endl;
+                     result+="| "+ca+"|                  *reserved*                   |  \n";
                      break;}
                  }
                  long DMINH = (PB5&0x80)>>7;
                  switch (DMINH) {
                  case 0x00:
-                     cout<<"Mixed stereo output is: permitted or no information about any assertion of this"<<endl;
+                     result+="Mixed stereo output is: permitted or no information about any assertion of this \n";
                      break;
                  case 0x01:
-                     cout<<"Mixed stereo output is: prohibited"<<endl;
+                     result+="Mixed stereo output is: prohibited \n";
                      break;
                  default:
                      break;
                  }
                  long LSV = (PB5&0x78)>>3;
+                 QString lsv = QString::number(LSV);
                  switch (LSV) {
                  case 0x00:{
-                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 0dB"<<endl;
+                     result+="LSV ="+ lsv +" >> Level Shift Value: 0dB"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 1dB"<<endl;
+                     result+="LSV ="+ lsv +" >> Level Shift Value: 1dB"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 2dB"<<endl;
+                     result+="LSV ="+ lsv +" >> Level Shift Value: 2dB"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 3dB"<<endl;
+                     result+="LSV ="+ lsv +" >> Level Shift Value: 3dB"+" \n";
                      break;}
                  case 0x04:{
-                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 4dB"<<endl;
+                     result+="LSV ="+ lsv +" >> Level Shift Value: 4dB"+" \n";
                      break;}
                  case 0x05:{
-                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 5dB"<<endl;
+                     result+="LSV ="+ lsv +" >> Level Shift Value: 5dB"+" \n";
                      break;}
                  case 0x06:{
-                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 6dB"<<endl;
+                     result+="LSV ="+ lsv +" >> Level Shift Value: 6dB"+" \n";
                      break;}
                  case 0x07:{
-                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 7dB"<<endl;
+                     result+="LSV ="+ lsv +" >> Level Shift Value: 7dB"+" \n";
                      break;}
                  case 0x08:{
-                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 8dB"<<endl;
+                     result+="LSV ="+ lsv +" >> Level Shift Value: 8dB"+" \n";
                      break;}
                  case 0x09:{
-                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 9dB"<<endl;
+                     result+="LSV ="+ lsv +" >> Level Shift Value: 9dB"+" \n";
                      break;}
                  case 0x0A:{
-                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 10dB"<<endl;
+                     result+="LSV ="+ lsv +" >> Level Shift Value: 10dB"+" \n";
                      break;}
                  case 0x0B:{
-                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 11dB"<<endl;
+                     result+="LSV ="+ lsv +" >> Level Shift Value: 11dB"+" \n";
                      break;}
                  case 0x0C:{
-                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 12dB"<<endl;
+                     result+="LSV ="+ lsv +" >> Level Shift Value: 12dB"+" \n";
                      break;}
                  case 0x0D:{
-                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 13dB"<<endl;
+                     result+="LSV ="+ lsv +" >> Level Shift Value: 13dB"+" \n";
                      break;}
                  case 0x0E:{
-                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 14dB"<<endl;
+                     result+="LSV ="+ lsv +" >> Level Shift Value: 14dB"+" \n";
                      break;}
                  case 0x0F:{
-                     cout<<"LSV ="<< LSV <<" >> Level Shift Value: 15dB"<<endl;
+                     result+="LSV ="+ lsv +" >> Level Shift Value: 15dB"+" \n";
                      break;}
                  default:
                      break;
                  }
                  long LFEPBL = PB5&0x02;
+                 QString lf = QString::number(LFEPBL);
                  switch (LFEPBL) {
                  case 0x00:{
-                     cout<<"LFEPBL="<< LFEPBL <<" >> LFE playback level: unknown or refer to other information"<<endl;
+                     result+="LFEPBL="+ lf +" >> LFE playback level: unknown or refer to other information"+" \n";
                      break;}
                  case 0x01:{
-                     cout<<"LFEPBL="<< LFEPBL <<" >> 0 dB playback"<<endl;
+                     result+="LFEPBL="+ lf +" >> 0 dB playback"+" \n";
                      break;}
                  case 0x02:{
-                     cout<<"LFEPBL="<< LFEPBL <<" >> + 10 dB playback"<<endl;
+                     result+="LFEPBL="+ lf +" >> + 10 dB playback"+" \n";
                      break;}
                  case 0x03:{
-                     cout<<"LFEPBL="<< LFEPBL <<" >> *reserved*"<<endl;
+                     result+="LFEPBL="+ lf +" >> *reserved*"+" \n";
                      break;}
                  default:
                      break;
@@ -1897,38 +2071,43 @@ void parser_packet::parse(){
             }
             break;}
         case 0x05:{
-            cout<<"InfoFrame Type: MPEG Source InfoFrame"<<endl;
+            result+="InfoFrame Type: MPEG Source InfoFrame \n";
             long IFVersion = HB1;
             long IFLenght = HB2&0x1F;
             if (IFVersion == 0x01){
-                cout<<"Version: "<<IFVersion<<endl;
-                cout<<"Length: "<<IFLenght<<endl;
-                long MB = (PB1) | ((PB2&0xFF)<<8)| ((PB3&0xFF)<<16)| ((PB4&0xFF)<<24);
-                cout<<"MPEG bit rate: "<<MB<<endl;
+                QString IFVersio = QString::number(IFVersion);
+                QString IFLengh = QString::number(IFLenght);
+                result+="Version: "+IFVersio+" \n";
+                result+="Length: "+IFLengh+" \n";
+                long MB = (PB1) | ((PB2&0xFF)+8)| ((PB3&0xFF)+16)| ((PB4&0xFF)+24);
+                QString mb = QString::number(MB);
+                result+="MPEG bit rate: "+mb+" \n";
                 long FR = (PB5&0x10)>>4;
+                QString fr = QString::number(FR);
                 switch (FR) {
                 case 0x00:
-                    cout<<"FR="<<FR<<" >> Field Repeat: New field(picture) "<<endl;
+                    result+="FR="+fr+" >> Field Repeat: New field(picture) "+" \n";
                     break;
                 case 0x01:
-                    cout<<"FR="<<FR<<" >> Field Repeat: Repeated Field "<<endl;
+                    result+="FR="+fr+" >> Field Repeat: Repeated Field "+" \n";
                     break;
                 default:
                     break;
                 }
                 long MF = PB5&0x03;
+                QString mf = QString::number(MF);
                 switch (MF) {
                 case 0x00:
-                    cout<<"MF="<<MF<<" >> Unknown (no data)"<<endl;
+                    result+="MF="+mf+" >> Unknown (no data)"+" \n";
                     break;
                 case 0x01:
-                    cout<<"MF="<<MF<<" >> I Picture"<<endl;
+                    result+="MF="+mf+" >> I Picture"+" \n";
                     break;
                 case 0x02:
-                    cout<<"MF="<<MF<<" >> B Picture"<<endl;
+                    result+="MF="+mf+" >> B Picture"+" \n";
                     break;
                 case 0x03:
-                    cout<<"MF="<<MF<<" >> P Picture"<<endl;
+                    result+="MF="+mf+" >> P Picture"+" \n";
                     break;
                 default:
                     break;
@@ -1936,105 +2115,29 @@ void parser_packet::parse(){
             }
             break;}
         case 0x06:{
-            cout<<"InfoFrame Type: NTSC VBI InfoFrame"<<endl;
+            result+="InfoFrame Type: NTSC VBI InfoFrame \n";
             long IFVersion = HB1;
             long IFLenght = HB2&0x1F;
             if (IFVersion == 0x01){
-                cout<<"Version: "<<IFVersion<<endl;
-                cout<<"Length: "<<IFLenght<<endl;
-                if (IFLenght>0){
-                    if (IFLenght>=1){
-                        long PES1=PB1;
-                        cout<< "PES1="<<PES1<<endl;
-                        if (IFLenght>=2){
-                            long PES2=PB2;
-                            cout<< "PES2="<<PES2<<endl;
-                            if (IFLenght>=3){long PES3=PB3;
-                                cout<< "PES3="<<PES3<<endl;
-                                if (IFLenght>=4){long PES4=PB4;
-                                    cout<< "PES4="<<PES4<<endl;
-                                    if (IFLenght>=5){long PES5=PB5;
-                                        cout<< "PES5="<<PES5<<endl;
-                                        if (IFLenght>=6){long PES6=PB6;
-                                            cout<< "PES6="<<PES6<<endl;
-                                            if (IFLenght>=7){long PES7=PB7;
-                                                cout<< "PES7="<<PES7<<endl;
-                                                if (IFLenght>=8){long PES8=PB8;
-                                                    cout<< "PES8="<<PES8<<endl;
-                                                    if (IFLenght>=9){long PES9=PB9;
-                                                        cout<< "PES9="<<PES9<<endl;
-                                                        if (IFLenght>=10){long PES10=PB10;
-                                                            cout<< "PES10="<<PES10<<endl;
-                                                            if (IFLenght>=11){long PES11=PB11;
-                                                                cout<< "PES11="<<PES11<<endl;
-                                                                if (IFLenght>=12){long PES12=PB12;
-                                                                    cout<< "PES12="<<PES12<<endl;
-                                                                    if (IFLenght>=13){long PES13=PB13;
-                                                                        cout<< "PES13="<<PES13<<endl;
-                                                                        if (IFLenght>=14){long PES14=PB14;
-                                                                            cout<< "PES14="<<PES14<<endl;
-                                                                            if (IFLenght>=15){long PES15=PB15;
-                                                                                cout<< "PES15="<<PES15<<endl;
-                                                                                if (IFLenght>=16){long PES16=PB16;
-                                                                                    cout<< "PES16="<<PES16<<endl;
-                                                                                    if (IFLenght>=17){long PES17=PB17;
-                                                                                        cout<< "PES17="<<PES17<<endl;
-                                                                                        if (IFLenght>=18){long PES18=PB18;
-                                                                                            cout<< "PES18="<<PES18<<endl;
-                                                                                            if (IFLenght>=19){long PES19=PB19;
-                                                                                                cout<< "PES19="<<PES19<<endl;
-                                                                                                if (IFLenght>=20){long PES20=PB20;
-                                                                                                    cout<< "PES20="<<PES20<<endl;
-                                                                                                    if (IFLenght>=21){long PES21=PB21;
-                                                                                                        cout<< "PES21="<<PES21<<endl;
-                                                                                                        if (IFLenght>=22){long PES22=PB22;
-                                                                                                            cout<< "PES22="<<PES22<<endl;
-                                                                                                            if (IFLenght>=23){long PES23=PB23;
-                                                                                                                cout<< "PES23="<<PES23<<endl;
-                                                                                                                if (IFLenght>=24){long PES24=PB24;
-                                                                                                                    cout<< "PES24="<<PES24<<endl;
-                                                                                                                    if (IFLenght>=25){long PES25=PB25;
-                                                                                                                        cout<< "PES25="<<PES25<<endl;
-                                                                                                                        if (IFLenght>=26){long PES26=PB26;
-                                                                                                                            cout<< "PES26="<<PES26<<endl;
-                                                                                                                            if (IFLenght>=27){long PES27=PB27;
-                                                                                                                                cout<< "PES27="<<PES27<<endl;
-
-                                                                                                                            }
-                                                                                                                        }
-                                                                                                                    }
-                                                                                                                }
-                                                                                                            }
-                                                                                                        }
-                                                                                                    }
-                                                                                                }
-                                                                                            }
-                                                                                        }
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                QString IFVersio = QString::number(IFVersion);
+                QString IFLengh = QString::number(IFLenght);
+                result+="Version: "+IFVersio+" \n";
+                result+="Length: "+IFLengh+" \n";
+                int i;
+                int k;
+                for(i=1;i++;i<=IFLengh){
+                    k=10+i;
+                    QString K = QString::number(k);
+                    QString I = QString::number(i);
+                    long b=byte[k];
+                    QString B = QString::number(b);
+                    result+="PES"+I+"= "+B+" \n";
                 }
-
-
-                }
+            }
 
             break;}
         default:{
-            cerr<<"invalid InfoFrame"<<endl;
+            result+="invalid InfoFrame \n";
             break;}
         }
     }
