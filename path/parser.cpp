@@ -87,10 +87,10 @@ void parser_packet::parse(QString get_path){
     QFile fileIn(get_path);
 //  QFile fileOut("E://test_files/good.txt");
     QByteArray byte;
-
         if(fileIn.open(QIODevice::ReadOnly))
         {
-            QByteArray Byte = fileIn.readAll();
+            QByteArray Byte = fileIn.read(38);
+            byte=Byte;
             HB0=Byte[0];
             HB1=Byte[1];
             HB2=Byte[2];
@@ -129,11 +129,7 @@ void parser_packet::parse(QString get_path){
             PB25=Byte[35];
             PB26=Byte[36];
             PB27=Byte[37];
-            byte=Byte;
         }
-    int pac=HB0;
-    QString Pac = QString::number(pac);
-    result+=Pac + " \n";
     switch (HB0) {
     case 0x00:
         pflag=Packet_type(HB0);
@@ -145,8 +141,8 @@ void parser_packet::parse(QString get_path){
         arr= arr_type[pflag];
         result+= "Packet type: " + arr + " \n"  ;
         if ((HB1 | HB2 | SB0 |(SB1>>4) | (SB4>>4)) == 0){
-            long CTS = (SB1<<16)|(SB2<<8)|SB3;
-            long N = (SB4<<16)|(SB5<<8)|SB6;
+            long CTS = (SB1+16)|(SB2+8)|SB3;
+            long N = (SB4+ 16)|(SB5+8)|SB6;
             QString cts = QString::number(CTS);
             QString n = QString::number(N);
             result+= "СTS: " + cts + " \n"  ;
@@ -165,8 +161,8 @@ void parser_packet::parse(QString get_path){
               long spX = HB1&0xF;
               long sfX = HB2&0xF;
               long B = HB2&(0xF0);
-              long L = (SB0<<4)|(SB1<<12)|(SB2<<20);
-              long R = (SB3<<4)|(SB4<<12)|(SB5<<20);
+              long L = (SB0+4)|(SB1+12)|(SB2+20);
+              long R = (SB3+4)|(SB4+12)|(SB5+20);
               long Vl =(SB6&0x01);
               long Vr =(SB6&0x10);
               long Ul =(SB6&0x02);
@@ -416,8 +412,8 @@ void parser_packet::parse(QString get_path){
             long si1 = (HB2&0x02);
             long si2 = (HB2&0x04);
             long si3 = (HB2&0x08);
-            long ChA = (SB0)|(SB1<<8)|(SB2<<16)|(SB6&0xF);
-            long ChB = (SB3)|(SB4<<8)|(SB5<<16)|(SB6&0xF);
+            long ChA = (SB0)|(SB1+8)|(SB2+16)|(SB6&0xF);
+            long ChB = (SB3)|(SB4+8)|(SB5+16)|(SB6&0xF);
             QString lay1 = QString::number(layout1);
             QString SP3 = QString::number(sp3);
             QString SP2 = QString::number(sp2);
@@ -621,7 +617,7 @@ void parser_packet::parse(QString get_path){
              QString IFVersio = QString::number(IFVersion);
              QString IFLeng = QString::number(IFLenght);
              if (IFVersion == 0x01){
-                  long IEEE= PB1 | (PB2<<8) | (PB3<<16);
+                  long IEEE= PB1 | (PB2+8) | (PB3+16);
                   long VA = (PB4&0xF0)>>4;
                   long VB = (PB4&0xF);
                   long VC = (PB5&0xF0)>>4;
@@ -2083,7 +2079,7 @@ void parser_packet::parse(QString get_path){
                 QString IFLengh = QString::number(IFLenght);
                 result+="Version: "+IFVersio+" \n";
                 result+="Length: "+IFLengh+" \n";
-                long MB = (PB1) | ((PB2&0xFF)<<8)| ((PB3&0xFF)<<16)| ((PB4&0xFF)<<24);
+                long MB = (PB1) | ((PB2&0xFF)+8)| ((PB3&0xFF)+16)| ((PB4&0xFF)+24);
                 QString mb = QString::number(MB);
                 result+="MPEG bit rate: "+mb+" \n";
                 long FR = (PB5&0x10)>>4;
