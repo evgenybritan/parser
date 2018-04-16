@@ -130,6 +130,8 @@ void parser_packet::parse(QString get_path){
             PB26=Byte[36];
             PB27=Byte[37];
         }
+
+
     switch (HB0) {
     case 0x00:
         pflag=Packet_type(HB0);
@@ -578,27 +580,32 @@ void parser_packet::parse(QString get_path){
         arr= arr_type[pflag];
         result+= "Packet type: " + arr + " \n"  ;
         break;
-    case 0x81 :
+    case -0x7F :
         pflag=Packet_type(11);
         arr= arr_type[pflag];
         result+= "Packet type: " + arr + " \n"  ;
         break;
-    case 0x82 :
+    case -0x7E :
         pflag=Packet_type(11);
         arr= arr_type[pflag];
         result+= "Packet type: " + arr + " \n"  ;
         break;
-    case 0x83 :
+    case -0x7D :
         pflag=Packet_type(11);
         arr= arr_type[pflag];
         result+= "Packet type: " + arr + " \n"  ;
         break;
-    case 0x84 :
+    case -0x7C :
         pflag=Packet_type(11);
         arr= arr_type[pflag];
         result+= "Packet type: " + arr + " \n"  ;
         break;
-    case 0x85 :
+    case -0x7B :
+        pflag=Packet_type(11);
+        arr= arr_type[pflag];
+        result+= "Packet type: " + arr + " \n"  ;
+        break;
+    case -0x7A :
         pflag=Packet_type(11);
         arr= arr_type[pflag];
         result+= "Packet type: " + arr + " \n"  ;

@@ -41,6 +41,10 @@ void MainWindow::on_pathstart_clicked()
     parser_packet objParse(path2);
     objParse.parse(path2);
     QFile fileCheck(path2);
+    if(ui->radioButton_2->isChecked()){
+    ui->textEdit->setText("Good");
+    }
+    else{
     if(fileCheck.open(QIODevice::ReadOnly))
     {
             ui->textEdit->setText(result);
@@ -48,7 +52,7 @@ void MainWindow::on_pathstart_clicked()
     else{
             ui->textEdit->setText("Invalid path");
     }
-
+    }
 }
 
 
