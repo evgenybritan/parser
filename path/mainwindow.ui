@@ -192,7 +192,7 @@
     <property name="geometry">
      <rect>
       <x>710</x>
-      <y>290</y>
+      <y>320</y>
       <width>31</width>
       <height>20</height>
      </rect>
@@ -202,7 +202,7 @@
     <property name="geometry">
      <rect>
       <x>710</x>
-      <y>320</y>
+      <y>350</y>
       <width>31</width>
       <height>20</height>
      </rect>
@@ -212,7 +212,7 @@
     <property name="geometry">
      <rect>
       <x>710</x>
-      <y>350</y>
+      <y>380</y>
       <width>31</width>
       <height>20</height>
      </rect>
@@ -222,7 +222,7 @@
     <property name="geometry">
      <rect>
       <x>710</x>
-      <y>380</y>
+      <y>410</y>
       <width>31</width>
       <height>20</height>
      </rect>
@@ -232,7 +232,7 @@
     <property name="geometry">
      <rect>
       <x>710</x>
-      <y>410</y>
+      <y>440</y>
       <width>31</width>
       <height>20</height>
      </rect>
@@ -242,7 +242,7 @@
     <property name="geometry">
      <rect>
       <x>710</x>
-      <y>440</y>
+      <y>470</y>
       <width>31</width>
       <height>20</height>
      </rect>
@@ -588,8 +588,8 @@
    <widget class="QLabel" name="label_12">
     <property name="geometry">
      <rect>
-      <x>686</x>
-      <y>290</y>
+      <x>690</x>
+      <y>320</y>
       <width>20</width>
       <height>20</height>
      </rect>
@@ -601,8 +601,8 @@
    <widget class="QLabel" name="label_13">
     <property name="geometry">
      <rect>
-      <x>686</x>
-      <y>320</y>
+      <x>690</x>
+      <y>350</y>
       <width>20</width>
       <height>20</height>
      </rect>
@@ -615,7 +615,7 @@
     <property name="geometry">
      <rect>
       <x>690</x>
-      <y>350</y>
+      <y>380</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -628,7 +628,7 @@
     <property name="geometry">
      <rect>
       <x>690</x>
-      <y>380</y>
+      <y>410</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -641,7 +641,7 @@
     <property name="geometry">
      <rect>
       <x>690</x>
-      <y>410</y>
+      <y>440</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -654,7 +654,7 @@
     <property name="geometry">
      <rect>
       <x>690</x>
-      <y>440</y>
+      <y>470</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -979,6 +979,29 @@
     </property>
     <property name="text">
      <string>Write (use fileds from HB0 to PB27; default value - 0)</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="sb6">
+    <property name="geometry">
+     <rect>
+      <x>710</x>
+      <y>290</y>
+      <width>31</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_40">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>290</y>
+      <width>16</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>6</string>
     </property>
    </widget>
   </widget>

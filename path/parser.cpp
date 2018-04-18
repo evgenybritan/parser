@@ -4,6 +4,7 @@
 #include <QString>
 #include "parser.h"
 #include <QFile>
+#include <QQueue>
 
 using namespace std;
 
@@ -35,6 +36,7 @@ const char *arr_type[]= {"Null",
                          "Gamut Metadata Packet",
                          "InfoFrame Packet"
                         };
+
 int HB0;
 int HB1;
 int HB2;
@@ -76,6 +78,7 @@ int PB27;
 Packet_type pflag;
 QString result;
 QString arr;
+extern QByteArray Bytes;
 
 parser_packet::parser_packet(QString get_path){
     parse(get_path);
@@ -83,11 +86,50 @@ parser_packet::parser_packet(QString get_path){
 
 void parser_packet::parse(QString get_path){
     result = "";
+
+    HB0=Bytes[0];
+    HB1=Bytes[1];
+    HB2=Bytes[2];
+    SB0=Bytes[3];
+    SB1=Bytes[4];
+    SB2=Bytes[5];
+    SB3=Bytes[6];
+    SB4=Bytes[7];
+    SB5=Bytes[8];
+    SB6=Bytes[9];
+    PB0=Bytes[10];
+    PB1=Bytes[11];
+    PB2=Bytes[12];
+    PB3=Bytes[13];
+    PB4=Bytes[14];
+    PB5=Bytes[15];
+    PB6=Bytes[16];
+    PB7=Bytes[17];
+    PB8=Bytes[18];
+    PB9=Bytes[19];
+    PB10=Bytes[20];
+    PB11=Bytes[21];
+    PB12=Bytes[22];
+    PB13=Bytes[23];
+    PB14=Bytes[24];
+    PB15=Bytes[25];
+    PB16=Bytes[26];
+    PB17=Bytes[27];
+    PB18=Bytes[28];
+    PB19=Bytes[29];
+    PB20=Bytes[30];
+    PB21=Bytes[31];
+    PB22=Bytes[32];
+    PB23=Bytes[33];
+    PB24=Bytes[34];
+    PB25=Bytes[35];
+    PB26=Bytes[36];
+    PB27=Bytes[37];
     path=get_path;
     QFile fileIn(get_path);
 //  QFile fileOut("E://test_files/good.txt");
     QByteArray byte;
-        if(fileIn.open(QIODevice::ReadOnly))
+        if(fileIn.open(QIODevice::ReadOnly) && (HB0 != 0))
         {
             QByteArray Byte = fileIn.read(38);
             byte=Byte;
@@ -130,6 +172,10 @@ void parser_packet::parse(QString get_path){
             PB26=Byte[36];
             PB27=Byte[37];
         }
+
+
+
+
 
 
     switch (HB0) {
@@ -652,8 +698,6 @@ void parser_packet::parse(QString get_path){
                   QString MAXTMD = QString::number(MAXTMDS);
                   QString LFP1 = QString::number(LFP);
                   QString ILFP2 = QString::number(ILFP);
-
-
                   result+="InfoFrame_version: "+IFVersio+" \n";
                   result+="InfoFrame_length: "+IFLeng+" \n";
                   result+="IEEE Registration Identifier: "+IEE+" \n";
@@ -1832,8 +1876,8 @@ void parser_packet::parse(QString get_path){
                      break;}}
                  long CA = PB4&0xFF;
                  QString ca = QString::number(CA);
-                 result+="|......|                   Channels:                   |  \n";
-                 result+="|  CA  |  8  |  7  |  6  |  5  |  4  |  3  |  2  |  1  |  \n";
+                 result+="|........|                    Channels:                    |  \n";
+                 result+="|   CA  |  8  |  7  |  6  |  5  |  4  |  3  |  2  |  1  |  \n";
                  switch (CA) {
                  case 0x00:{
                      result+="| 0x00 |  -  |  -  |  -  |  -  |  -  |  -  |  FR |  FL |  \n";
