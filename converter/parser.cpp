@@ -1,28 +1,12 @@
-#include <fstream>
-#include <iostream>
 #include <stdlib.h>
 #include <QString>
 #include "parser.h"
 #include <QFile>
-#include <QQueue>
+
 
 using namespace std;
 
-enum Packet_type{
-  Null ,
-  Audio_Clock_Regeneration,
-  Audio_Sample,
-  General_Control,
-  ACP_Packet,
-  ISRC1_Packet,
-  ISRC2_Packet,
-  One_Bit_Audio_Sample_Packet,
-  DST_Audio_Packet,
-  High_Bitrate_Audio_Stream_Packet,
-  Gamut_Metadata_Packet,
-  InfoFrame_Packet
 
-};
 const char *arr_type[]= {"Null",
                          "Audio Clock Regeneration",
                          "Audio Sample",
@@ -33,62 +17,73 @@ const char *arr_type[]= {"Null",
                          "One Bit Audio Sample Packet",
                          "DST Audio Packet",
                          "High Bitrate (HBR) Audio Stream Packet (IEC 61937)",
-                         "Gamut Metadata Packet",
-                         "InfoFrame Packet"
+                         "Gamut Metadata Packet"
                         };
 
 int HB0;
 int HB1;
-int HB2;
-int SB0;
-int SB1;
-int SB2;
-int SB3;
-int SB4;
-int SB5;
-int SB6;
-int PB0;
-int PB1;
-int PB2;
-int PB3;
-int PB4;
-int PB5;
-int PB6;
-int PB7;
-int PB8;
-int PB9;
-int PB10;
-int PB11;
-int PB12;
-int PB13;
-int PB14;
-int PB15;
-int PB16;
-int PB17;
-int PB18;
-int PB19;
-int PB20;
-int PB21;
-int PB22;
-int PB23;
-int PB24;
-int PB25;
-int PB26;
-int PB27;
-Packet_type pflag;
-QString result;
-QString arr;
+int HB2, SB0, SB1, SB2, SB3, SB4, SB5, SB6, PB0, PB1, PB2, PB3, PB4, PB5, PB6, PB7, PB8, PB9, PB10, PB11, PB12, PB13, PB14, PB15, PB16, PB17, PB18, PB19, PB20, PB21, PB22, PB23, PB24, PB25, PB26, PB27;
+QString result, arr, high, low;
 extern QByteArray Bytes;
-QString f,s;
-int bit,g,S;
+int bit, High_Bits, Low_Bits;
+extern int way,h0,h1,h2;
+extern QString s0,s1,s2,s3,s4,s5,s6,p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20,p21,p22,p23,p24,p25,p26,p27;
 
-parser_packet::parser_packet(QString get_path){
-    parse(get_path);
-}
+static const int INFO_FRAME_PACKET_BIT = 0x80;
 
-void parser_packet::parse(QString get_path){
+Parser::Parser(QString path){
     result = "";
+    QFile fileIn(path);
+    QByteArray byte;
+    result=path+"\n";
+    arr= arr_type[HB0];
 
+    if(way==1){
+         if(fileIn.open(QIODevice::ReadOnly))
+            {
+             fileIn.read((char*)&HB0,sizeof HB0);
+             fileIn.read((char*)&HB1,sizeof HB1);
+             fileIn.read((char*)&HB2,sizeof HB2);
+             fileIn.read((char*)&SB0,sizeof SB0);
+             fileIn.read((char*)&SB1,sizeof SB1);
+             fileIn.read((char*)&SB2,sizeof SB2);
+             fileIn.read((char*)&SB3,sizeof SB3);
+             fileIn.read((char*)&SB4,sizeof SB4);
+             fileIn.read((char*)&SB5,sizeof SB5);
+             fileIn.read((char*)&SB6,sizeof SB6);
+             fileIn.read((char*)&PB0,sizeof PB0);
+             fileIn.read((char*)&PB1,sizeof PB1);
+             fileIn.read((char*)&PB2,sizeof PB2);
+             fileIn.read((char*)&PB3,sizeof PB3);
+             fileIn.read((char*)&PB4,sizeof PB4);
+             fileIn.read((char*)&PB5,sizeof PB5);
+             fileIn.read((char*)&PB6,sizeof PB6);
+             fileIn.read((char*)&PB7,sizeof PB7);
+             fileIn.read((char*)&PB8,sizeof PB8);
+             fileIn.read((char*)&PB9,sizeof PB9);
+             fileIn.read((char*)&PB10,sizeof PB10);
+             fileIn.read((char*)&PB11,sizeof PB11);
+             fileIn.read((char*)&PB12,sizeof PB12);
+             fileIn.read((char*)&PB13,sizeof PB13);
+             fileIn.read((char*)&PB14,sizeof PB14);
+             fileIn.read((char*)&PB15,sizeof PB15);
+             fileIn.read((char*)&PB16,sizeof PB16);
+             fileIn.read((char*)&PB17,sizeof PB17);
+             fileIn.read((char*)&PB18,sizeof PB18);
+             fileIn.read((char*)&PB19,sizeof PB19);
+             fileIn.read((char*)&PB20,sizeof PB20);
+             fileIn.read((char*)&PB21,sizeof PB21);
+             fileIn.read((char*)&PB22,sizeof PB22);
+             fileIn.read((char*)&PB23,sizeof PB23);
+             fileIn.read((char*)&PB24,sizeof PB24);
+             fileIn.read((char*)&PB25,sizeof PB25);
+             fileIn.read((char*)&PB26,sizeof PB26);
+             fileIn.read((char*)&PB27,sizeof PB27);
+
+
+            }
+    }
+    if(way==2){
     HB0=Bytes[0];
     HB1=Bytes[1];
     HB2=Bytes[2];
@@ -127,347 +122,730 @@ void parser_packet::parse(QString get_path){
     PB25=Bytes[35];
     PB26=Bytes[36];
     PB27=Bytes[37];
-    path=get_path;
-    QFile fileIn(get_path);
-//  QFile fileOut("E://test_files/good.txt");
-    QByteArray byte;
-        if(fileIn.open(QIODevice::ReadOnly) && (HB0 != 0))
-        {
-            QByteArray Byte = fileIn.read(38);
-            byte=Byte;
-            HB0=Byte[0];
-            HB1=Byte[1];
-            HB2=Byte[2];
-            SB0=Byte[3];
-            SB1=Byte[4];
-            SB2=Byte[5];
-            SB3=Byte[6];
-            SB4=Byte[7];
-            SB5=Byte[8];
-            SB6=Byte[9];
-            PB0=Byte[10];
-            PB1=Byte[11];
-            PB2=Byte[12];
-            PB3=Byte[13];
-            PB4=Byte[14];
-            PB5=Byte[15];
-            PB6=Byte[16];
-            PB7=Byte[17];
-            PB8=Byte[18];
-            PB9=Byte[19];
-            PB10=Byte[20];
-            PB11=Byte[21];
-            PB12=Byte[22];
-            PB13=Byte[23];
-            PB14=Byte[24];
-            PB15=Byte[25];
-            PB16=Byte[26];
-            PB17=Byte[27];
-            PB18=Byte[28];
-            PB19=Byte[29];
-            PB20=Byte[30];
-            PB21=Byte[31];
-            PB22=Byte[32];
-            PB23=Byte[33];
-            PB24=Byte[34];
-            PB25=Byte[35];
-            PB26=Byte[36];
-            PB27=Byte[37];
+    }
+    if(way==3){
+        HB0=h0;
+        HB1=h1;
+        HB2=h2;
+        int rem, bin, dec = 0, b = 1;
+        dec = 0;
+        b = 1;
+        bin = s0.toInt();
+           while (bin > 0)
+           {
+               rem = bin % 10;
+               dec = dec + rem * b;
+               b *= 2;
+               bin /= 10;}
+         SB0=dec;
+         dec = 0;
+         b = 1;
+         bin = s1.toInt();
+            while (bin > 0)
+            {
+                rem = bin % 10;
+                dec = dec + rem * b;
+                b *= 2;
+                bin /= 10;}
+          SB1=dec;
+          dec = 0;
+          b = 1;
+          bin = s2.toInt();
+             while (bin > 0)
+             {
+                 rem = bin % 10;
+                 dec = dec + rem * b;
+                 b *= 2;
+                 bin /= 10;}
+           SB2=dec;
+           dec = 0;
+           b = 1;
+           bin = s3.toInt();
+              while (bin > 0)
+              {
+                  rem = bin % 10;
+                  dec = dec + rem * b;
+                  b *= 2;
+                  bin /= 10;}
+            SB3=dec;
+            dec = 0;
+            b = 1;
+            bin = s4.toInt();
+               while (bin > 0)
+               {
+                   rem = bin % 10;
+                   dec = dec + rem * b;
+                   b *= 2;
+                   bin /= 10;}
+             SB4=dec;
+             dec = 0;
+             b = 1;
+             bin = s5.toInt();
+                while (bin > 0)
+                {
+                    rem = bin % 10;
+                    dec = dec + rem * b;
+                    b *= 2;
+                    bin /= 10;}
+              SB5=dec;
+              dec = 0;
+              b = 1;
+              bin = s6.toInt();
+                 while (bin > 0)
+                 {
+                     rem = bin % 10;
+                     dec = dec + rem * b;
+                     b *= 2;
+                     bin /= 10;}
+               SB6=dec;
+
+               dec = 0;
+               b = 1;
+               bin = p0.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB0=dec;
+               dec = 0;
+               b = 1;
+               bin = p1.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB1=dec;
+               dec = 0;
+               b = 1;
+               bin = p2.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB2=dec;
+               dec = 0;
+               b = 1;
+               bin = p3.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB3=dec;
+               dec = 0;
+               b = 1;
+               bin = p4.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB4=dec;
+               dec = 0;
+               b = 1;
+               bin = p5.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB5=dec;
+               dec = 0;
+               b = 1;
+               bin = p6.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB6=dec;
+               dec = 0;
+               b = 1;
+               bin = p7.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB7=dec;
+               dec = 0;
+               b = 1;
+               bin = p8.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB8=dec;
+               dec = 0;
+               b = 1;
+               bin = p9.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB9=dec;
+               dec = 0;
+               b = 1;
+               bin = p10.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB10=dec;
+               dec = 0;
+               b = 1;
+               bin = p11.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB11=dec;
+               dec = 0;
+               b = 1;
+               bin = p12.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB12=dec;
+               dec = 0;
+               b = 1;
+               bin = p13.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB13=dec;
+               dec = 0;
+               b = 1;
+               bin = p14.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB14=dec;
+               dec = 0;
+               b = 1;
+               bin = p15.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB15=dec;
+               dec = 0;
+               b = 1;
+               bin = p16.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB16=dec;
+               dec = 0;
+               b = 1;
+               bin = p17.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB17=dec;
+               dec = 0;
+               b = 1;
+               bin = p18.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB18=dec;
+               dec = 0;
+               b = 1;
+               bin = p19.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB19=dec;
+               dec = 0;
+               b = 1;
+               bin = p20.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB20=dec;
+               dec = 0;
+               b = 1;
+               bin = p21.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB21=dec;
+               dec = 0;
+               b = 1;
+               bin = p22.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB22=dec;
+               dec = 0;
+               b = 1;
+               bin = p23.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB23=dec;
+               dec = 0;
+               b = 1;
+               bin = p24.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB24=dec;
+               dec = 0;
+               b = 1;
+               bin = p25.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB25=dec;
+               dec = 0;
+               b = 1;
+               bin = p26.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB26=dec;
+               dec = 0;
+               b = 1;
+               bin = p27.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB27=dec;
+
+
+    }
+    if(way==4){
+        if(fileIn.open(QIODevice::ReadOnly)){
+            bool ok;
+            QString h0=fileIn.read(2);
+            QString h1=fileIn.read(3);
+            QString h2=fileIn.read(3);
+            HB0=h0.toInt(&ok,16);
+            HB1=h1.toInt(&ok,16);
+            HB2=h2.toInt(&ok,16);
+            if ((HB0&INFO_FRAME_PACKET_BIT) ==0){
+            QString s0=fileIn.read(4);
+            QString s1=fileIn.read(3);
+            QString s2=fileIn.read(3);
+            QString s3=fileIn.read(3);
+            QString s4=fileIn.read(3);
+            QString s5=fileIn.read(3);
+            QString s6=fileIn.read(3);
+            SB0=s0.toInt(&ok,16);
+            SB1=s1.toInt(&ok,16);
+            SB2=s2.toInt(&ok,16);
+            SB3=s3.toInt(&ok,16);
+            SB4=s4.toInt(&ok,16);
+            SB5=s5.toInt(&ok,16);
+            SB6=s6.toInt(&ok,16);
+            }
+            else{
+            QString p0=fileIn.read(4);
+            QString p1=fileIn.read(3);
+            QString p2=fileIn.read(3);
+            QString p3=fileIn.read(3);
+            QString p4=fileIn.read(3);
+            QString p5=fileIn.read(3);
+            QString p6=fileIn.read(3);
+            QString p7=fileIn.read(3);
+            QString p8=fileIn.read(3);
+            QString p9=fileIn.read(3);
+            QString p10=fileIn.read(3);
+            QString p11=fileIn.read(3);
+            QString p12=fileIn.read(3);
+            QString p13=fileIn.read(3);
+            QString p14=fileIn.read(3);
+            QString p15=fileIn.read(3);
+            QString p16=fileIn.read(3);
+            QString p17=fileIn.read(3);
+            QString p18=fileIn.read(3);
+            QString p19=fileIn.read(3);
+            QString p20=fileIn.read(3);
+            QString p21=fileIn.read(3);
+            QString p22=fileIn.read(3);
+            QString p23=fileIn.read(3);
+            QString p24=fileIn.read(3);
+            QString p25=fileIn.read(3);
+            QString p26=fileIn.read(3);
+            QString p27=fileIn.read(3);
+            PB0=p0.toInt(&ok,16);
+            PB1=p1.toInt(&ok,16);
+            PB2=p2.toInt(&ok,16);
+            PB3=p3.toInt(&ok,16);
+            PB4=p4.toInt(&ok,16);
+            PB5=p5.toInt(&ok,16);
+            PB6=p6.toInt(&ok,16);
+            PB7=p7.toInt(&ok,16);
+            PB8=p8.toInt(&ok,16);
+            PB9=p9.toInt(&ok,16);
+            PB10=p10.toInt(&ok,16);
+            PB11=p11.toInt(&ok,16);
+            PB12=p12.toInt(&ok,16);
+            PB13=p13.toInt(&ok,16);
+            PB14=p14.toInt(&ok,16);
+            PB15=p15.toInt(&ok,16);
+            PB16=p16.toInt(&ok,16);
+            PB17=p17.toInt(&ok,16);
+            PB18=p18.toInt(&ok,16);
+            PB19=p19.toInt(&ok,16);
+            PB20=p20.toInt(&ok,16);
+            PB21=p21.toInt(&ok,16);
+            PB22=p22.toInt(&ok,16);
+            PB23=p23.toInt(&ok,16);
+            PB24=p24.toInt(&ok,16);
+            PB25=p25.toInt(&ok,16);
+            PB26=p26.toInt(&ok,16);
+            PB27=p27.toInt(&ok,16);
+            }
         }
-if (((HB0&0x80) !=0) && ((HB2&0xE0) == 0)){
+        }
+
+
         bit = HB0;
-        g=bit&0xFF;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=f;
-}
-else{
-        bit = HB0;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=f+s;
-}
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=high+low;
 
         bit = HB1;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = HB2;
-        g=bit&0xF0;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
-       if ((HB0&0x80) ==0){
+       if ((HB0&INFO_FRAME_PACKET_BIT) ==0){
         bit = SB0;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = SB1;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = SB2;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = SB3;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = SB4;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = SB5;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = SB6;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s+"\n";
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low+"\n";
 }
-       if (((HB0&0x80) !=0) && ((HB2&0xE0) == 0)){
+       if (((HB0&INFO_FRAME_PACKET_BIT) !=0) && ((HB2&0xE0) == 0)){
+
         bit = PB0;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB1;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB2;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB3;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB4;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB5;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB6;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB7;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB8;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB9;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB10;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB11;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB12;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB13;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB14;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB15;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB16;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB17;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB18;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB19;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB20;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB21;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB22;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB23;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB24;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB25;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB26;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low;
 
         bit = PB27;
-        g=bit/16;
-        S=bit&0x0F;
-        f=QString("%1").arg(g,0,16);
-        s=QString("%1").arg(S,0,16);
-        result+=" "+f+s+"\n";
+        High_Bits=(bit&0xF0)>>4;
+        Low_Bits=bit&0x0F;
+        high=QString("%1").arg(High_Bits,0,16);
+        low=QString("%1").arg(Low_Bits,0,16);
+        result+=" "+high+low+"\n";
 }
-
-
-
-
     switch (HB0) {
     case 0x00:
-        pflag=Packet_type(HB0);
-        arr= arr_type[pflag];
         result+= "Packet type: " + arr + " \n"  ;
         break;
     case 0x01:
-        pflag=Packet_type(HB0);
-        arr= arr_type[pflag];
         result+= "Packet type: " + arr + " \n"  ;
         if ((HB1 | HB2 | SB0 |(SB1>>4) | (SB4>>4)) == 0){
-            long CTS = (SB1+16)|(SB2+8)|SB3;
-            long N = (SB4+ 16)|(SB5+8)|SB6;
+            long CTS = (SB1<<16)|(SB2<<8)|SB3;
+            long N = (SB4<<16)|(SB5<<8)|SB6;
             QString cts = QString::number(CTS);
             QString n = QString::number(N);
             result+= "СTS: " + cts + " \n"  ;
@@ -478,16 +856,14 @@ else{
         }
         break;
     case 0x02:
-        pflag=Packet_type(HB0);
-        arr= arr_type[pflag];
         result+= "Packet type: " + arr + " \n"  ;
         if ((HB1>>5) == 0){
               long layout = HB1&0x10;
               long spX = HB1&0xF;
               long sfX = HB2&0xF;
               long B = HB2&(0xF0);
-              long L = (SB0+4)|(SB1+12)|(SB2+20);
-              long R = (SB3+4)|(SB4+12)|(SB5+20);
+              long L = (SB0<<4)|(SB1<<12)|(SB2+20);
+              long R = (SB3<<4)|(SB4<<12)|(SB5+20);
               long Vl =(SB6&0x01);
               long Vr =(SB6&0x10);
               long Ul =(SB6&0x02);
@@ -530,8 +906,6 @@ else{
         }
         break;
     case 0x03:
-        pflag=Packet_type(HB0);
-        arr= arr_type[pflag];
         result+= "Packet type: " + arr + " \n"  ;
         if ((HB1 | HB2 | (SB0&0xEE) | (SB2>>1) | SB3 | SB4 | SB5 | SB6 )==0){
              long setAVMUTE = (SB0&0x01);
@@ -556,8 +930,6 @@ else{
         }
         break;
     case 0x04:
-        pflag=Packet_type(HB0);
-        arr= arr_type[pflag];
         result+="Packet type: " + arr + " \n"  ;
         if (HB2 == 0){
             switch (HB1) {
@@ -603,8 +975,6 @@ else{
         }
         break;
     case 0x05:
-        pflag=Packet_type(HB0);
-        arr= arr_type[pflag];
         result+= "Packet type: " + arr + " \n"  ;
         if (((HB1&0x38) == 0) && (HB2==0)) {
             long Cont = (HB1&0x80);
@@ -669,8 +1039,6 @@ else{
         }
         break;
     case 0x06:
-        pflag=Packet_type(HB0);
-        arr= arr_type[pflag];
         result+= "Packet type: " + arr + " \n"  ;
         if ((HB1 == 0) && (HB2 == 0) && ((PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27)==0)){
             long UEI16 = PB0;
@@ -724,8 +1092,6 @@ else{
         }
         break;
     case 0x07:
-        pflag=Packet_type(HB0);
-        arr= arr_type[pflag];
         result+= "Packet type: " + arr + " \n"  ;
         if (((HB1&0xE0)==0) && ((HB2&0xF0)==0)){
             long layout1 = (HB1&0x10);
@@ -737,8 +1103,8 @@ else{
             long si1 = (HB2&0x02);
             long si2 = (HB2&0x04);
             long si3 = (HB2&0x08);
-            long ChA = (SB0)|(SB1+8)|(SB2+16)|(SB6&0xF);
-            long ChB = (SB3)|(SB4+8)|(SB5+16)|(SB6&0xF);
+            long ChA = (SB0)|(SB1<<8)|(SB2<<16)|(SB6&0xF);
+            long ChB = (SB3)|(SB4<<8)|(SB5<<16)|(SB6&0xF);
             QString lay1 = QString::number(layout1);
             QString SP3 = QString::number(sp3);
             QString SP2 = QString::number(sp2);
@@ -765,8 +1131,6 @@ else{
         }
         break;
     case 0x08:
-        pflag=Packet_type(HB0);
-        arr= arr_type[pflag];
         result+= "Packet type: " + arr + " \n"  ;
         if (((HB1&0x3E) == 0) && (HB2 == 0)){
             long frames = (HB1&0x80);
@@ -784,8 +1148,6 @@ else{
         }
         break;
     case 0x09:
-        pflag=Packet_type(HB0);
-        arr= arr_type[pflag];
         result+= "Packet type: " + arr + " \n"  ;
         if ((HB1 == 0) && ((HB2&0xF) == 0)){
             long Bx = (HB2&0xF0);
@@ -795,8 +1157,6 @@ else{
 
         break;
     case 0x0A:
-        pflag=Packet_type(HB0);
-        arr= arr_type[pflag];
         result+= "Packet type: " + arr + " \n"  ;
         if ((HB2&0x40)==0){
             long nextf = HB1&0x80;
@@ -898,56 +1258,47 @@ else{
 
         }
         break;
-    case 0x80 :
-        pflag=Packet_type(11);
-        arr= arr_type[pflag];
-        result+= "Packet type: " + arr + " \n"  ;
+    case -0x80 :
+        result+= "Packet type: InfoFrame Packet \n"  ;
         break;
     case -0x7F :
-        pflag=Packet_type(11);
-        arr= arr_type[pflag];
-        result+= "Packet type: " + arr + " \n"  ;
+        result+= "Packet type: InfoFrame Packet \n"  ;
         break;
     case -0x7E :
-        pflag=Packet_type(11);
-        arr= arr_type[pflag];
-        result+= "Packet type: " + arr + " \n"  ;
+        result+= "Packet type: InfoFrame Packet \n"  ;
         break;
     case -0x7D :
-        pflag=Packet_type(11);
-        arr= arr_type[pflag];
-        result+= "Packet type: " + arr + " \n"  ;
+        result+= "Packet type: InfoFrame Packet \n"  ;
         break;
     case -0x7C :
-        pflag=Packet_type(11);
-        arr= arr_type[pflag];
-        result+= "Packet type: " + arr + " \n"  ;
+        result+= "Packet type: InfoFrame Packet \n"  ;
         break;
     case -0x7B :
-        pflag=Packet_type(11);
-        arr= arr_type[pflag];
-        result+= "Packet type: " + arr + " \n"  ;
+        result+= "Packet type: InfoFrame Packet \n"  ;
         break;
     case -0x7A :
-        pflag=Packet_type(11);
-        arr= arr_type[pflag];
-        result+= "Packet type: " + arr + " \n"  ;
+        result+= "Packet type: InfoFrame Packet \n"  ;
+        break;
+    case -0x79 :
+        result+= "Packet type: InfoFrame Packet \n"  ;
         break;
     default:
         result+="invalid byte\n";
         break;
     }
-    if (((HB0&0x80) !=0) && ((HB2&0xE0) == 0)){
+    if (((HB0&INFO_FRAME_PACKET_BIT) !=0) && ((HB2&0xE0) == 0)){
         long IFType = HB0&0x7F;
+
         switch (IFType) {
         case 0x01:{
             result+="InfoFrame Type: Vendor Specific InfoFrame\n";
+             HB0=0x81;
              long IFVersion = HB1;
              long IFLenght = HB2&0x1F;
              QString IFVersio = QString::number(IFVersion);
              QString IFLeng = QString::number(IFLenght);
              if (IFVersion == 0x01){
-                  long IEEE= PB1 | (PB2+8) | (PB3+16);
+                  long IEEE= PB1 | (PB2<<8) | (PB3<<16);
                   long VA = (PB4&0xF0)>>4;
                   long VB = (PB4&0xF);
                   long VC = (PB5&0xF0)>>4;
@@ -1014,6 +1365,7 @@ else{
              }
             break;}
         case 0x02:{
+            HB0=0x82;
             result+="InfoFrame Type: AVI InfoFrame\n";
             long IFVersion = HB1;
             if (IFVersion == 0x01){
@@ -1854,7 +2206,7 @@ else{
                  long SRB = (PB11&0xFF) | (PB12&0xFF00);
                  QString etb = QString::number(ETB);
                  QString sbb = QString::number(SBB);
-                 QString elb = QString::number(ELB);\
+                 QString elb = QString::number(ELB);
                  QString srb = QString::number(SRB);
                  result+="ETB: "+etb+" \n";
                  result+="SBB: "+sbb+" \n";
@@ -1864,6 +2216,7 @@ else{
             }
             break;}
         case 0x03:{
+            HB0=0x83;
             result+="InfoFrame Type: Source Product Descriptor InfoFrame \n";
             long IFVersion = HB1;
             long IFLenght = HB2&0x1F;
@@ -1996,6 +2349,7 @@ else{
             }
             break;}
         case 0x04:{
+            HB0=0x84;
             result+="InfoFrame Type: Audio InfoFrame \n";
             long IFVersion = HB1;
             long IFLenght = HB2&0x1F;
@@ -2399,6 +2753,7 @@ else{
             }
             break;}
         case 0x05:{
+            HB0=0x85;
             result+="InfoFrame Type: MPEG Source InfoFrame \n";
             long IFVersion = HB1;
             long IFLenght = HB2&0x1F;
@@ -2407,7 +2762,7 @@ else{
                 QString IFLengh = QString::number(IFLenght);
                 result+="Version: "+IFVersio+" \n";
                 result+="Length: "+IFLengh+" \n";
-                long MB = (PB1) | ((PB2&0xFF)+8)| ((PB3&0xFF)+16)| ((PB4&0xFF)+24);
+                long MB = (PB1) | ((PB2&0xFF)<<8)| ((PB3&0xFF)<<16)| ((PB4&0xFF)+24);
                 QString mb = QString::number(MB);
                 result+="MPEG bit rate: "+mb+" \n";
                 long FR = (PB5&0x10)>>4;
@@ -2443,6 +2798,7 @@ else{
             }
             break;}
         case 0x06:{
+            HB0=0x86;
             result+="InfoFrame Type: NTSC VBI InfoFrame \n";
             long IFVersion = HB1;
             long IFLenght = HB2&0x1F;
@@ -2460,13 +2816,27 @@ else{
                     long b=byte[k];
                     QString B = QString::number(b);
                     result+="PES"+I+"= "+B+" \n";
+
                 }
             }
-
             break;}
+        case 0x07:{
+            HB0=0x87;
+            result+="InfoFrame Type: 7 \n";
+            long IFVersion = HB1;
+            long IFLenght = HB2&0x1F;
+            QString IFVersio = QString::number(IFVersion);
+            QString IFLengh = QString::number(IFLenght);
+            result+="Version: "+IFVersio+" \n";
+            result+="Length: "+IFLengh+" \n";
+            break;}
+
         default:{
             result+="invalid InfoFrame \n";
             break;}
         }
     }
+
+
 }
+
