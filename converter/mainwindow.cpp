@@ -79,7 +79,6 @@ void MainWindow::on_parsestart_clicked()
     if(ui->radioButton->isChecked()){
         way=1;
         Parser objParse(path2);
-        objParse.parse(path2);
         QFile fileCheck(path2);
         if(fileCheck.open(QIODevice::ReadOnly))
         {
@@ -132,7 +131,6 @@ void MainWindow::on_parsestart_clicked()
         Bytes[ 36 ]=ui->pb26->text().toInt();
         Bytes[ 37 ]=ui->pb27->text().toInt();
         Parser objParse(path2);
-        objParse.parse(path2);
         ui->textEdit->setText(result);
         ui->hb0->setText(QString::number(HB0));
         ui->hb1->setText(QString::number(HB1));
@@ -214,13 +212,11 @@ void MainWindow::on_parsestart_clicked()
         p26=ui->pb26_7->text()+ui->pb26_6->text()+ui->pb26_5->text()+ui->pb26_4->text()+ui->pb26_3->text()+ui->pb26_8->text()+ui->pb26_1->text()+ui->pb26_0->text();
         p27=ui->pb27_7->text()+ui->pb27_6->text()+ui->pb27_5->text()+ui->pb27_4->text()+ui->pb27_3->text()+ui->pb27_8->text()+ui->pb27_1->text()+ui->pb27_0->text();
         Parser objParse(path2);
-        objParse.parse(path2);
         ui->textEdit->setText(result);
     }
     if(ui->radioButton_4->isChecked()){
         way=4;
         Parser objParse(path2);
-        objParse.parse(path2);
         QFile fileCheck(path2);
         if(fileCheck.open(QIODevice::ReadOnly))
         {

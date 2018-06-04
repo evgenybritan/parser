@@ -1,4 +1,3 @@
-#include <iostream>
 #include <stdlib.h>
 #include <QString>
 #include "parser.h"
@@ -18,14 +17,12 @@ const char *arr_type[]= {"Null",
                          "One Bit Audio Sample Packet",
                          "DST Audio Packet",
                          "High Bitrate (HBR) Audio Stream Packet (IEC 61937)",
-                         "Gamut Metadata Packet",
-                         "InfoFrame Packet"
+                         "Gamut Metadata Packet"
                         };
 
 int HB0;
 int HB1;
 int HB2, SB0, SB1, SB2, SB3, SB4, SB5, SB6, PB0, PB1, PB2, PB3, PB4, PB5, PB6, PB7, PB8, PB9, PB10, PB11, PB12, PB13, PB14, PB15, PB16, PB17, PB18, PB19, PB20, PB21, PB22, PB23, PB24, PB25, PB26, PB27;
-Packet_type pflag;
 QString result, arr, high, low;
 extern QByteArray Bytes;
 int bit, High_Bits, Low_Bits;
@@ -35,16 +32,11 @@ extern QString s0,s1,s2,s3,s4,s5,s6,p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p1
 static const int INFO_FRAME_PACKET_BIT = 0x80;
 
 Parser::Parser(QString path){
-    parse(path);
-}
-
-void Parser::parse(QString path){
     result = "";
     QFile fileIn(path);
     QByteArray byte;
     result=path+"\n";
-    pflag=Packet_type(HB0);
-    arr= arr_type[pflag];
+    arr= arr_type[HB0];
 
     if(way==1){
          if(fileIn.open(QIODevice::ReadOnly))
@@ -88,46 +80,7 @@ void Parser::parse(QString path){
              fileIn.read((char*)&PB26,sizeof PB26);
              fileIn.read((char*)&PB27,sizeof PB27);
 
-//                QByteArray Byte = fileIn.read(38);
-//                byte=Byte;
-//                HB0=Byte[0];
-//                HB1=Byte[1];
-//                HB2=Byte[2];
-//                SB0=Byte[3];
-//                SB1=Byte[4];
-//                SB2=Byte[5];
-//                SB3=Byte[6];
-//                SB4=Byte[7];
-//                SB5=Byte[8];
-//                SB6=Byte[9];
-//                PB0=Byte[10];
-//                PB1=Byte[11];
-//                PB2=Byte[12];
-//                PB3=Byte[13];
-//                PB4=Byte[14];
-//                PB5=Byte[15];
-//                PB6=Byte[16];
-//                PB7=Byte[17];
-//                PB8=Byte[18];
-//                PB9=Byte[19];
-//                PB10=Byte[20];
-//                PB11=Byte[21];
-//                PB12=Byte[22];
-//                PB13=Byte[23];
-//                PB14=Byte[24];
-//                PB15=Byte[25];
-//                PB16=Byte[26];
-//                PB17=Byte[27];
-//                PB18=Byte[28];
-//                PB19=Byte[29];
-//                PB20=Byte[30];
-//                PB21=Byte[31];
-//                PB22=Byte[32];
-//                PB23=Byte[33];
-//                PB24=Byte[34];
-//                PB25=Byte[35];
-//                PB26=Byte[36];
-//                PB27=Byte[37];
+
             }
     }
     if(way==2){
@@ -688,6 +641,7 @@ void Parser::parse(QString path){
         result+=" "+high+low+"\n";
 }
        if (((HB0&INFO_FRAME_PACKET_BIT) !=0) && ((HB2&0xE0) == 0)){
+
         bit = PB0;
         High_Bits=(bit&0xF0)>>4;
         Low_Bits=bit&0x0F;
@@ -883,19 +837,11 @@ void Parser::parse(QString path){
         low=QString("%1").arg(Low_Bits,0,16);
         result+=" "+high+low+"\n";
 }
-
-
-
-
     switch (HB0) {
     case 0x00:
-
-
         result+= "Packet type: " + arr + " \n"  ;
         break;
     case 0x01:
-
-
         result+= "Packet type: " + arr + " \n"  ;
         if ((HB1 | HB2 | SB0 |(SB1>>4) | (SB4>>4)) == 0){
             long CTS = (SB1<<16)|(SB2<<8)|SB3;
@@ -910,8 +856,6 @@ void Parser::parse(QString path){
         }
         break;
     case 0x02:
-
-
         result+= "Packet type: " + arr + " \n"  ;
         if ((HB1>>5) == 0){
               long layout = HB1&0x10;
@@ -962,8 +906,6 @@ void Parser::parse(QString path){
         }
         break;
     case 0x03:
-
-
         result+= "Packet type: " + arr + " \n"  ;
         if ((HB1 | HB2 | (SB0&0xEE) | (SB2>>1) | SB3 | SB4 | SB5 | SB6 )==0){
              long setAVMUTE = (SB0&0x01);
@@ -988,8 +930,6 @@ void Parser::parse(QString path){
         }
         break;
     case 0x04:
-
-
         result+="Packet type: " + arr + " \n"  ;
         if (HB2 == 0){
             switch (HB1) {
@@ -1035,8 +975,6 @@ void Parser::parse(QString path){
         }
         break;
     case 0x05:
-
-
         result+= "Packet type: " + arr + " \n"  ;
         if (((HB1&0x38) == 0) && (HB2==0)) {
             long Cont = (HB1&0x80);
@@ -1101,8 +1039,6 @@ void Parser::parse(QString path){
         }
         break;
     case 0x06:
-
-
         result+= "Packet type: " + arr + " \n"  ;
         if ((HB1 == 0) && (HB2 == 0) && ((PB16 | PB17 |PB18 | PB19 | PB20 |PB21 | PB22 | PB23 |PB24 | PB25 | PB26 |PB27)==0)){
             long UEI16 = PB0;
@@ -1156,8 +1092,6 @@ void Parser::parse(QString path){
         }
         break;
     case 0x07:
-
-
         result+= "Packet type: " + arr + " \n"  ;
         if (((HB1&0xE0)==0) && ((HB2&0xF0)==0)){
             long layout1 = (HB1&0x10);
@@ -1197,8 +1131,6 @@ void Parser::parse(QString path){
         }
         break;
     case 0x08:
-
-
         result+= "Packet type: " + arr + " \n"  ;
         if (((HB1&0x3E) == 0) && (HB2 == 0)){
             long frames = (HB1&0x80);
@@ -1216,8 +1148,6 @@ void Parser::parse(QString path){
         }
         break;
     case 0x09:
-
-
         result+= "Packet type: " + arr + " \n"  ;
         if ((HB1 == 0) && ((HB2&0xF) == 0)){
             long Bx = (HB2&0xF0);
@@ -1227,8 +1157,6 @@ void Parser::parse(QString path){
 
         break;
     case 0x0A:
-
-
         result+= "Packet type: " + arr + " \n"  ;
         if ((HB2&0x40)==0){
             long nextf = HB1&0x80;
@@ -1330,45 +1258,29 @@ void Parser::parse(QString path){
 
         }
         break;
-    case 0x80 :
-        pflag=Packet_type(11);
-
-        result+= "Packet type: " + arr + " \n"  ;
+    case -0x80 :
+        result+= "Packet type: InfoFrame Packet \n"  ;
         break;
-    case 0x81 :
-        pflag=Packet_type(11);
-
-        result+= "Packet type: " + arr + " \n"  ;
+    case -0x7F :
+        result+= "Packet type: InfoFrame Packet \n"  ;
         break;
-    case 0x82 :
-        pflag=Packet_type(11);
-
-        result+= "Packet type: " + arr + " \n"  ;
+    case -0x7E :
+        result+= "Packet type: InfoFrame Packet \n"  ;
         break;
-    case 0x83 :
-        pflag=Packet_type(11);
-
-        result+= "Packet type: " + arr + " \n"  ;
+    case -0x7D :
+        result+= "Packet type: InfoFrame Packet \n"  ;
         break;
-    case 0x84 :
-        pflag=Packet_type(11);
-
-        result+= "Packet type: " + arr + " \n"  ;
+    case -0x7C :
+        result+= "Packet type: InfoFrame Packet \n"  ;
         break;
-    case 0x85 :
-        pflag=Packet_type(11);
-
-        result+= "Packet type: " + arr + " \n"  ;
+    case -0x7B :
+        result+= "Packet type: InfoFrame Packet \n"  ;
         break;
-    case 0x86 :
-        pflag=Packet_type(11);
-
-        result+= "Packet type: " + arr + " \n"  ;
+    case -0x7A :
+        result+= "Packet type: InfoFrame Packet \n"  ;
         break;
-    case 0x87 :
-        pflag=Packet_type(11);
-
-        result+= "Packet type: " + arr + " \n"  ;
+    case -0x79 :
+        result+= "Packet type: InfoFrame Packet \n"  ;
         break;
     default:
         result+="invalid byte\n";
@@ -1376,9 +1288,11 @@ void Parser::parse(QString path){
     }
     if (((HB0&INFO_FRAME_PACKET_BIT) !=0) && ((HB2&0xE0) == 0)){
         long IFType = HB0&0x7F;
+
         switch (IFType) {
         case 0x01:{
             result+="InfoFrame Type: Vendor Specific InfoFrame\n";
+             HB0=0x81;
              long IFVersion = HB1;
              long IFLenght = HB2&0x1F;
              QString IFVersio = QString::number(IFVersion);
@@ -1451,6 +1365,7 @@ void Parser::parse(QString path){
              }
             break;}
         case 0x02:{
+            HB0=0x82;
             result+="InfoFrame Type: AVI InfoFrame\n";
             long IFVersion = HB1;
             if (IFVersion == 0x01){
@@ -2291,7 +2206,7 @@ void Parser::parse(QString path){
                  long SRB = (PB11&0xFF) | (PB12&0xFF00);
                  QString etb = QString::number(ETB);
                  QString sbb = QString::number(SBB);
-                 QString elb = QString::number(ELB);\
+                 QString elb = QString::number(ELB);
                  QString srb = QString::number(SRB);
                  result+="ETB: "+etb+" \n";
                  result+="SBB: "+sbb+" \n";
@@ -2301,6 +2216,7 @@ void Parser::parse(QString path){
             }
             break;}
         case 0x03:{
+            HB0=0x83;
             result+="InfoFrame Type: Source Product Descriptor InfoFrame \n";
             long IFVersion = HB1;
             long IFLenght = HB2&0x1F;
@@ -2433,6 +2349,7 @@ void Parser::parse(QString path){
             }
             break;}
         case 0x04:{
+            HB0=0x84;
             result+="InfoFrame Type: Audio InfoFrame \n";
             long IFVersion = HB1;
             long IFLenght = HB2&0x1F;
@@ -2836,6 +2753,7 @@ void Parser::parse(QString path){
             }
             break;}
         case 0x05:{
+            HB0=0x85;
             result+="InfoFrame Type: MPEG Source InfoFrame \n";
             long IFVersion = HB1;
             long IFLenght = HB2&0x1F;
@@ -2880,6 +2798,7 @@ void Parser::parse(QString path){
             }
             break;}
         case 0x06:{
+            HB0=0x86;
             result+="InfoFrame Type: NTSC VBI InfoFrame \n";
             long IFVersion = HB1;
             long IFLenght = HB2&0x1F;
@@ -2902,6 +2821,7 @@ void Parser::parse(QString path){
             }
             break;}
         case 0x07:{
+            HB0=0x87;
             result+="InfoFrame Type: 7 \n";
             long IFVersion = HB1;
             long IFLenght = HB2&0x1F;
@@ -2916,4 +2836,7 @@ void Parser::parse(QString path){
             break;}
         }
     }
+
+
 }
+
