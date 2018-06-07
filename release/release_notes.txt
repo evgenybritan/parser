@@ -1,2 +1,0 @@
-Release 2.0:
--the structure of project was totaly changed;
