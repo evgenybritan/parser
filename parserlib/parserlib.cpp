@@ -22,14 +22,6 @@ const char *arr_type[]= {"Null",
 
 
 
-int HB0;
-int HB1;
-int HB2, SB0, SB1, SB2, SB3, SB4, SB5, SB6, PB0, PB1, PB2, PB3, PB4, PB5, PB6, PB7, PB8, PB9, PB10, PB11, PB12, PB13, PB14, PB15, PB16, PB17, PB18, PB19, PB20, PB21, PB22, PB23, PB24, PB25, PB26, PB27;
-QString result, arr, high, low;
-extern QByteArray Bytes;
-int bit, High_Bits, Low_Bits;
-extern int way,h0,h1,h2;
-extern QString s0,s1,s2,s3,s4,s5,s6,p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20,p21,p22,p23,p24,p25,p26,p27;
 
 static const int INFO_FRAME_PACKET_BIT = 0x80;
 
@@ -39,7 +31,8 @@ Parserlib::Parserlib(QString path){
     QByteArray byte;
     result=path+"\n";
     arr= arr_type[HB0];
-         if(fileIn.open(QIODevice::ReadOnly))
+    if(way==1){
+       if(fileIn.open(QIODevice::ReadOnly))
             {
              fileIn.read((char*)&HB0,sizeof HB0);
              fileIn.read((char*)&HB1,sizeof HB1);
@@ -79,8 +72,492 @@ Parserlib::Parserlib(QString path){
              fileIn.read((char*)&PB25,sizeof PB25);
              fileIn.read((char*)&PB26,sizeof PB26);
              fileIn.read((char*)&PB27,sizeof PB27);
-            }
+         }
+    }
+    if(way==2){
+    HB0=Bytes[0];
+    HB1=Bytes[1];
+    HB2=Bytes[2];
+    SB0=Bytes[3];
+    SB1=Bytes[4];
+    SB2=Bytes[5];
+    SB3=Bytes[6];
+    SB4=Bytes[7];
+    SB5=Bytes[8];
+    SB6=Bytes[9];
+    PB0=Bytes[10];
+    PB1=Bytes[11];
+    PB2=Bytes[12];
+    PB3=Bytes[13];
+    PB4=Bytes[14];
+    PB5=Bytes[15];
+    PB6=Bytes[16];
+    PB7=Bytes[17];
+    PB8=Bytes[18];
+    PB9=Bytes[19];
+    PB10=Bytes[20];
+    PB11=Bytes[21];
+    PB12=Bytes[22];
+    PB13=Bytes[23];
+    PB14=Bytes[24];
+    PB15=Bytes[25];
+    PB16=Bytes[26];
+    PB17=Bytes[27];
+    PB18=Bytes[28];
+    PB19=Bytes[29];
+    PB20=Bytes[30];
+    PB21=Bytes[31];
+    PB22=Bytes[32];
+    PB23=Bytes[33];
+    PB24=Bytes[34];
+    PB25=Bytes[35];
+    PB26=Bytes[36];
+    PB27=Bytes[37];
+    }
+    if(way==3){
+        HB0=h0;
+        HB1=h1;
+        HB2=h2;
+        int rem, bin, dec = 0, b = 1;
+        dec = 0;
+        b = 1;
+        bin = s0.toInt();
+           while (bin > 0)
+           {
+               rem = bin % 10;
+               dec = dec + rem * b;
+               b *= 2;
+               bin /= 10;}
+         SB0=dec;
+         dec = 0;
+         b = 1;
+         bin = s1.toInt();
+            while (bin > 0)
+            {
+                rem = bin % 10;
+                dec = dec + rem * b;
+                b *= 2;
+                bin /= 10;}
+          SB1=dec;
+          dec = 0;
+          b = 1;
+          bin = s2.toInt();
+             while (bin > 0)
+             {
+                 rem = bin % 10;
+                 dec = dec + rem * b;
+                 b *= 2;
+                 bin /= 10;}
+           SB2=dec;
+           dec = 0;
+           b = 1;
+           bin = s3.toInt();
+              while (bin > 0)
+              {
+                  rem = bin % 10;
+                  dec = dec + rem * b;
+                  b *= 2;
+                  bin /= 10;}
+            SB3=dec;
+            dec = 0;
+            b = 1;
+            bin = s4.toInt();
+               while (bin > 0)
+               {
+                   rem = bin % 10;
+                   dec = dec + rem * b;
+                   b *= 2;
+                   bin /= 10;}
+             SB4=dec;
+             dec = 0;
+             b = 1;
+             bin = s5.toInt();
+                while (bin > 0)
+                {
+                    rem = bin % 10;
+                    dec = dec + rem * b;
+                    b *= 2;
+                    bin /= 10;}
+              SB5=dec;
+              dec = 0;
+              b = 1;
+              bin = s6.toInt();
+                 while (bin > 0)
+                 {
+                     rem = bin % 10;
+                     dec = dec + rem * b;
+                     b *= 2;
+                     bin /= 10;}
+               SB6=dec;
 
+               dec = 0;
+               b = 1;
+               bin = p0.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB0=dec;
+               dec = 0;
+               b = 1;
+               bin = p1.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB1=dec;
+               dec = 0;
+               b = 1;
+               bin = p2.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB2=dec;
+               dec = 0;
+               b = 1;
+               bin = p3.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB3=dec;
+               dec = 0;
+               b = 1;
+               bin = p4.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB4=dec;
+               dec = 0;
+               b = 1;
+               bin = p5.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB5=dec;
+               dec = 0;
+               b = 1;
+               bin = p6.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB6=dec;
+               dec = 0;
+               b = 1;
+               bin = p7.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB7=dec;
+               dec = 0;
+               b = 1;
+               bin = p8.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB8=dec;
+               dec = 0;
+               b = 1;
+               bin = p9.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB9=dec;
+               dec = 0;
+               b = 1;
+               bin = p10.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB10=dec;
+               dec = 0;
+               b = 1;
+               bin = p11.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB11=dec;
+               dec = 0;
+               b = 1;
+               bin = p12.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB12=dec;
+               dec = 0;
+               b = 1;
+               bin = p13.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB13=dec;
+               dec = 0;
+               b = 1;
+               bin = p14.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB14=dec;
+               dec = 0;
+               b = 1;
+               bin = p15.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB15=dec;
+               dec = 0;
+               b = 1;
+               bin = p16.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB16=dec;
+               dec = 0;
+               b = 1;
+               bin = p17.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB17=dec;
+               dec = 0;
+               b = 1;
+               bin = p18.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB18=dec;
+               dec = 0;
+               b = 1;
+               bin = p19.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB19=dec;
+               dec = 0;
+               b = 1;
+               bin = p20.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB20=dec;
+               dec = 0;
+               b = 1;
+               bin = p21.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB21=dec;
+               dec = 0;
+               b = 1;
+               bin = p22.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB22=dec;
+               dec = 0;
+               b = 1;
+               bin = p23.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB23=dec;
+               dec = 0;
+               b = 1;
+               bin = p24.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB24=dec;
+               dec = 0;
+               b = 1;
+               bin = p25.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB25=dec;
+               dec = 0;
+               b = 1;
+               bin = p26.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB26=dec;
+               dec = 0;
+               b = 1;
+               bin = p27.toInt();
+                  while (bin > 0)
+                  {
+                      rem = bin % 10;
+                      dec = dec + rem * b;
+                      b *= 2;
+                      bin /= 10;}
+               PB27=dec;
+
+
+    }
+    if(way==4){
+        if(fileIn.open(QIODevice::ReadOnly)){
+            bool ok;
+            QString h0=fileIn.read(2);
+            QString h1=fileIn.read(3);
+            QString h2=fileIn.read(3);
+            HB0=h0.toInt(&ok,16);
+            HB1=h1.toInt(&ok,16);
+            HB2=h2.toInt(&ok,16);
+            if ((HB0&INFO_FRAME_PACKET_BIT) ==0){
+            QString s0=fileIn.read(4);
+            QString s1=fileIn.read(3);
+            QString s2=fileIn.read(3);
+            QString s3=fileIn.read(3);
+            QString s4=fileIn.read(3);
+            QString s5=fileIn.read(3);
+            QString s6=fileIn.read(3);
+            SB0=s0.toInt(&ok,16);
+            SB1=s1.toInt(&ok,16);
+            SB2=s2.toInt(&ok,16);
+            SB3=s3.toInt(&ok,16);
+            SB4=s4.toInt(&ok,16);
+            SB5=s5.toInt(&ok,16);
+            SB6=s6.toInt(&ok,16);
+            }
+            else{
+            QString p0=fileIn.read(4);
+            QString p1=fileIn.read(3);
+            QString p2=fileIn.read(3);
+            QString p3=fileIn.read(3);
+            QString p4=fileIn.read(3);
+            QString p5=fileIn.read(3);
+            QString p6=fileIn.read(3);
+            QString p7=fileIn.read(3);
+            QString p8=fileIn.read(3);
+            QString p9=fileIn.read(3);
+            QString p10=fileIn.read(3);
+            QString p11=fileIn.read(3);
+            QString p12=fileIn.read(3);
+            QString p13=fileIn.read(3);
+            QString p14=fileIn.read(3);
+            QString p15=fileIn.read(3);
+            QString p16=fileIn.read(3);
+            QString p17=fileIn.read(3);
+            QString p18=fileIn.read(3);
+            QString p19=fileIn.read(3);
+            QString p20=fileIn.read(3);
+            QString p21=fileIn.read(3);
+            QString p22=fileIn.read(3);
+            QString p23=fileIn.read(3);
+            QString p24=fileIn.read(3);
+            QString p25=fileIn.read(3);
+            QString p26=fileIn.read(3);
+            QString p27=fileIn.read(3);
+            PB0=p0.toInt(&ok,16);
+            PB1=p1.toInt(&ok,16);
+            PB2=p2.toInt(&ok,16);
+            PB3=p3.toInt(&ok,16);
+            PB4=p4.toInt(&ok,16);
+            PB5=p5.toInt(&ok,16);
+            PB6=p6.toInt(&ok,16);
+            PB7=p7.toInt(&ok,16);
+            PB8=p8.toInt(&ok,16);
+            PB9=p9.toInt(&ok,16);
+            PB10=p10.toInt(&ok,16);
+            PB11=p11.toInt(&ok,16);
+            PB12=p12.toInt(&ok,16);
+            PB13=p13.toInt(&ok,16);
+            PB14=p14.toInt(&ok,16);
+            PB15=p15.toInt(&ok,16);
+            PB16=p16.toInt(&ok,16);
+            PB17=p17.toInt(&ok,16);
+            PB18=p18.toInt(&ok,16);
+            PB19=p19.toInt(&ok,16);
+            PB20=p20.toInt(&ok,16);
+            PB21=p21.toInt(&ok,16);
+            PB22=p22.toInt(&ok,16);
+            PB23=p23.toInt(&ok,16);
+            PB24=p24.toInt(&ok,16);
+            PB25=p25.toInt(&ok,16);
+            PB26=p26.toInt(&ok,16);
+            PB27=p27.toInt(&ok,16);
+            }
+        }
+        }
 
 
         bit = HB0;
