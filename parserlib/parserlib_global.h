@@ -1,0 +1,12 @@
+#ifndef PARSERLIB_GLOBAL_H
+#define PARSERLIB_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(PARSERLIB_LIBRARY)
+#  define PARSERLIBSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define PARSERLIBSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // PARSERLIB_GLOBAL_H
