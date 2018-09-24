@@ -1,2 +1,4 @@
 Release 2.0:
 -the structure of project was totaly changed;
+Release 3.0:
+-completed version with lib;
