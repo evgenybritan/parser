@@ -30,6 +30,11 @@ void MainWindow::on_start_clicked()
     QString packetInfo = "";
     QString filename =ui->path->text();
     Parser parser;
-    parser.parse(filename, packetInfo);
-    ui->result->setText(packetInfo);
+    Parser::Error res= parser.parse(filename, packetInfo);
+    switch (res)
+    {
+        case Parser::NO_ERRORS: ui->result->setText(packetInfo); break;
+        case Parser::FILE_NOT_FOUND: ui->result->setText("FNF"); break;
+        case Parser::INVALID_PACKET: ui->result->setText("Invalid packet"); break;
+    }
 }
