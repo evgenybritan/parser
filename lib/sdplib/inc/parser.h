@@ -16,7 +16,7 @@ public:
         INVALID_PACKET  = 2
     };
 
-    Error parse(QString const filename, QString &result);
+    static Error parse(QString const filename, QString &result);
 
 
 };

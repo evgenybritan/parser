@@ -17,7 +17,8 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     parser.h \
-    parser_global.h
+    parser_global.h \
+    version.h
 
 FORMS    += mainwindow.ui
 
