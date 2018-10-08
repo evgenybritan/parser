@@ -16,9 +16,10 @@ public:
         INVALID_PACKET  = 2
     };
 
-    //ToDo make it static
-    Error parse(QString const filename, QString &result);
+    static Error parse(QString const filename, QString &result);
+
 
 };
+
 
 #endif // PARSER_H
