@@ -126,11 +126,11 @@ void MainWindow::on_open_clicked()
     {
         case Parser::NO_ERRORS: ui->result->setText(packetInfo); break;
         case Parser::FILE_NOT_FOUND: ui->result->setText("FNF"); break;
-        case Parser::INVALID_PACKET: ui->result->setText("Invalid packet"); break;
+        case Parser::INVALID_PACKET: ui->result->setText(packetInfo+"Invalid packet"); break;
     }
 
-    Version::Info versionInfo = Version::getVersionInfo();
-    ui->libVer->setText(versionInfo.major + versionInfo.minor);
-    ui->spec->setText(versionInfo.specifications);
+//    Version::Info versionInfo = Version::getVersionInfo();
+//    ui->libVer->setText(versionInfo.major + versionInfo.minor);
+//    ui->spec->setText(versionInfo.specifications);
 
 }

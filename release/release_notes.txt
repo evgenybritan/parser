@@ -2,3 +2,5 @@ Release 2.0:
 -the structure of project was totaly changed;
 Release 3.0:
 -completed version with lib;
+Release 3.2:
+-input method changed;
